@@ -1,0 +1,4831 @@
+{
+  "name": "repo-build-checklist",
+  "version": "1.0.0",
+  "description": "A 400-item checklist for building a software repository from empty directory to maintained project. Filter by phase, priority, and applies_to; running all 400 on a small project is the wrong use.",
+  "usage": {
+    "filter_by_priority": "must = do it or accept known risk; should = default yes; optional = context-dependent",
+    "filter_by_applies_to": "Match against your project type tags before treating an item as relevant",
+    "minimum_viable_pass": "The 'must' items alone are a defensible baseline for a small project",
+    "done_field": "Mutable boolean, provided so this file can be used as working state"
+  },
+  "counts": {
+    "total": 400,
+    "must": 133,
+    "should": 253,
+    "optional": 14,
+    "phases": 22
+  },
+  "phases": [
+    {
+      "id": "scoping",
+      "title": "Scoping & decisions",
+      "when": "Before any code exists",
+      "applies_to": [
+        "all"
+      ],
+      "task_count": 16
+    },
+    {
+      "id": "repo-init",
+      "title": "Repository initialization",
+      "when": "First hour of the repo",
+      "applies_to": [
+        "all"
+      ],
+      "task_count": 20
+    },
+    {
+      "id": "structure",
+      "title": "Project structure",
+      "when": "First day",
+      "applies_to": [
+        "all"
+      ],
+      "task_count": 16
+    },
+    {
+      "id": "deps",
+      "title": "Dependencies & toolchain",
+      "when": "First day, revisited forever",
+      "applies_to": [
+        "all"
+      ],
+      "task_count": 20
+    },
+    {
+      "id": "vcs",
+      "title": "Version control workflow",
+      "when": "Before the second contributor",
+      "applies_to": [
+        "all"
+      ],
+      "task_count": 20
+    },
+    {
+      "id": "quality",
+      "title": "Code quality gates",
+      "when": "Before the codebase grows",
+      "applies_to": [
+        "all"
+      ],
+      "task_count": 22
+    },
+    {
+      "id": "testing",
+      "title": "Testing",
+      "when": "Alongside the first feature",
+      "applies_to": [
+        "all"
+      ],
+      "task_count": 28
+    },
+    {
+      "id": "ci",
+      "title": "Continuous integration",
+      "when": "Before the first PR",
+      "applies_to": [
+        "all"
+      ],
+      "task_count": 24
+    },
+    {
+      "id": "security",
+      "title": "Security",
+      "when": "Continuous",
+      "applies_to": [
+        "all"
+      ],
+      "task_count": 26
+    },
+    {
+      "id": "config",
+      "title": "Configuration & secrets",
+      "when": "Before the first deploy",
+      "applies_to": [
+        "app",
+        "service",
+        "cli"
+      ],
+      "task_count": 18
+    },
+    {
+      "id": "docs",
+      "title": "Documentation",
+      "when": "Continuous",
+      "applies_to": [
+        "all"
+      ],
+      "task_count": 24
+    },
+    {
+      "id": "legal",
+      "title": "Licensing & legal",
+      "when": "Before the first public push",
+      "applies_to": [
+        "all"
+      ],
+      "task_count": 12
+    },
+    {
+      "id": "build",
+      "title": "Build & packaging",
+      "when": "Before the first release",
+      "applies_to": [
+        "all"
+      ],
+      "task_count": 16
+    },
+    {
+      "id": "release",
+      "title": "Release & versioning",
+      "when": "Before the first release",
+      "applies_to": [
+        "library",
+        "app",
+        "cli"
+      ],
+      "task_count": 18
+    },
+    {
+      "id": "deploy",
+      "title": "Deployment & operations",
+      "when": "Before production traffic",
+      "applies_to": [
+        "app",
+        "service"
+      ],
+      "task_count": 18
+    },
+    {
+      "id": "observability",
+      "title": "Observability",
+      "when": "Before production traffic",
+      "applies_to": [
+        "app",
+        "service"
+      ],
+      "task_count": 18
+    },
+    {
+      "id": "performance",
+      "title": "Performance",
+      "when": "After it works, before it scales",
+      "applies_to": [
+        "app",
+        "service",
+        "library"
+      ],
+      "task_count": 12
+    },
+    {
+      "id": "data",
+      "title": "Data & persistence",
+      "when": "If the project stores state",
+      "applies_to": [
+        "service",
+        "app",
+        "data"
+      ],
+      "task_count": 14
+    },
+    {
+      "id": "api",
+      "title": "API design",
+      "when": "If the project exposes an interface",
+      "applies_to": [
+        "service",
+        "library"
+      ],
+      "task_count": 12
+    },
+    {
+      "id": "frontend",
+      "title": "Frontend & accessibility",
+      "when": "If the project has a UI",
+      "applies_to": [
+        "frontend",
+        "app"
+      ],
+      "task_count": 12
+    },
+    {
+      "id": "community",
+      "title": "Community & contribution",
+      "when": "Before or at open sourcing",
+      "applies_to": [
+        "oss",
+        "team"
+      ],
+      "task_count": 14
+    },
+    {
+      "id": "maintenance",
+      "title": "Maintenance & lifecycle",
+      "when": "Recurring, forever",
+      "applies_to": [
+        "all"
+      ],
+      "task_count": 20
+    }
+  ],
+  "tasks": [
+    {
+      "id": "T001",
+      "phase": "scoping",
+      "order": 1,
+      "task": "Write a one-sentence description of what the repo does; if you cannot, the scope is not settled",
+      "priority": "must",
+      "applies_to": [
+        "all"
+      ],
+      "done": false
+    },
+    {
+      "id": "T002",
+      "phase": "scoping",
+      "order": 2,
+      "task": "Name the specific users and the specific problem this solves for them",
+      "priority": "must",
+      "applies_to": [
+        "all"
+      ],
+      "done": false
+    },
+    {
+      "id": "T003",
+      "phase": "scoping",
+      "order": 3,
+      "task": "List explicit non-goals so scope creep has something to bounce off",
+      "priority": "should",
+      "applies_to": [
+        "all"
+      ],
+      "done": false
+    },
+    {
+      "id": "T004",
+      "phase": "scoping",
+      "order": 4,
+      "task": "Decide whether this is a library, an application, a service, or a CLI",
+      "priority": "must",
+      "applies_to": [
+        "all"
+      ],
+      "done": false
+    },
+    {
+      "id": "T005",
+      "phase": "scoping",
+      "order": 5,
+      "task": "Pick a name and confirm it is free on the registry, the host, and DNS",
+      "priority": "must",
+      "applies_to": [
+        "all"
+      ],
+      "done": false
+    },
+    {
+      "id": "T006",
+      "phase": "scoping",
+      "order": 6,
+      "task": "Search for existing tools that already do this and note why yours differs",
+      "priority": "should",
+      "applies_to": [
+        "all"
+      ],
+      "done": false
+    },
+    {
+      "id": "T007",
+      "phase": "scoping",
+      "order": 7,
+      "task": "Decide public or private, and whether that decision can be reversed later",
+      "priority": "must",
+      "applies_to": [
+        "all"
+      ],
+      "done": false
+    },
+    {
+      "id": "T008",
+      "phase": "scoping",
+      "order": 8,
+      "task": "Choose the primary language and write down the one-line justification",
+      "priority": "must",
+      "applies_to": [
+        "all"
+      ],
+      "done": false
+    },
+    {
+      "id": "T009",
+      "phase": "scoping",
+      "order": 9,
+      "task": "Define the minimum supported runtime and platform versions",
+      "priority": "must",
+      "applies_to": [
+        "all"
+      ],
+      "done": false
+    },
+    {
+      "id": "T010",
+      "phase": "scoping",
+      "order": 10,
+      "task": "Decide how long old versions stay supported",
+      "priority": "should",
+      "applies_to": [
+        "all"
+      ],
+      "done": false
+    },
+    {
+      "id": "T011",
+      "phase": "scoping",
+      "order": 11,
+      "task": "Sketch the top-level architecture in a diagram or five bullets",
+      "priority": "should",
+      "applies_to": [
+        "all"
+      ],
+      "done": false
+    },
+    {
+      "id": "T012",
+      "phase": "scoping",
+      "order": 12,
+      "task": "Identify hard external dependencies: APIs, hardware, data feeds, vendors",
+      "priority": "must",
+      "applies_to": [
+        "all"
+      ],
+      "done": false
+    },
+    {
+      "id": "T013",
+      "phase": "scoping",
+      "order": 13,
+      "task": "Note regulatory or compliance constraints before they shape the design",
+      "priority": "should",
+      "applies_to": [
+        "all"
+      ],
+      "done": false
+    },
+    {
+      "id": "T014",
+      "phase": "scoping",
+      "order": 14,
+      "task": "Define what finished means for v1 in testable terms",
+      "priority": "must",
+      "applies_to": [
+        "all"
+      ],
+      "done": false
+    },
+    {
+      "id": "T015",
+      "phase": "scoping",
+      "order": 15,
+      "task": "Estimate the ongoing maintenance cost you are signing up for",
+      "priority": "should",
+      "applies_to": [
+        "all"
+      ],
+      "done": false
+    },
+    {
+      "id": "T016",
+      "phase": "scoping",
+      "order": 16,
+      "task": "Decide who owns the repo and who holds merge rights",
+      "priority": "should",
+      "applies_to": [
+        "all"
+      ],
+      "done": false
+    },
+    {
+      "id": "T017",
+      "phase": "repo-init",
+      "order": 1,
+      "task": "Initialize the git repository",
+      "priority": "must",
+      "applies_to": [
+        "all"
+      ],
+      "done": true
+    },
+    {
+      "id": "T018",
+      "phase": "repo-init",
+      "order": 2,
+      "task": "Set the default branch name explicitly",
+      "priority": "must",
+      "applies_to": [
+        "all"
+      ],
+      "done": true
+    },
+    {
+      "id": "T019",
+      "phase": "repo-init",
+      "order": 3,
+      "task": "Keep the first commit to scaffolding only, so history starts clean",
+      "priority": "should",
+      "applies_to": [
+        "all"
+      ],
+      "done": true
+    },
+    {
+      "id": "T020",
+      "phase": "repo-init",
+      "order": 4,
+      "task": "Add a .gitignore from a language-appropriate template",
+      "priority": "must",
+      "applies_to": [
+        "all"
+      ],
+      "done": true
+    },
+    {
+      "id": "T021",
+      "phase": "repo-init",
+      "order": 5,
+      "task": "Add .gitattributes for line endings and binary file handling",
+      "priority": "should",
+      "applies_to": [
+        "all"
+      ],
+      "done": true
+    },
+    {
+      "id": "T022",
+      "phase": "repo-init",
+      "order": 6,
+      "task": "Add an .editorconfig so editors agree on whitespace",
+      "priority": "should",
+      "applies_to": [
+        "all"
+      ],
+      "done": true
+    },
+    {
+      "id": "T023",
+      "phase": "repo-init",
+      "order": 7,
+      "task": "Create README.md as the first real file in the repo",
+      "priority": "must",
+      "applies_to": [
+        "all"
+      ],
+      "done": true
+    },
+    {
+      "id": "T024",
+      "phase": "repo-init",
+      "order": 8,
+      "task": "Add LICENSE before the first public push",
+      "priority": "must",
+      "applies_to": [
+        "all"
+      ],
+      "done": true
+    },
+    {
+      "id": "T025",
+      "phase": "repo-init",
+      "order": 9,
+      "task": "Reserve the package name on the registry if you intend to publish",
+      "priority": "should",
+      "applies_to": [
+        "all"
+      ],
+      "done": true
+    },
+    {
+      "id": "T026",
+      "phase": "repo-init",
+      "order": 10,
+      "task": "Set the repository description and topics on the host",
+      "priority": "should",
+      "applies_to": [
+        "all"
+      ],
+      "done": false
+    },
+    {
+      "id": "T027",
+      "phase": "repo-init",
+      "order": 11,
+      "task": "Disable host features you will not use, such as wiki or projects",
+      "priority": "optional",
+      "applies_to": [
+        "all"
+      ],
+      "done": false
+    },
+    {
+      "id": "T028",
+      "phase": "repo-init",
+      "order": 12,
+      "task": "Enable issues and decide where support requests should go",
+      "priority": "should",
+      "applies_to": [
+        "all"
+      ],
+      "done": false
+    },
+    {
+      "id": "T029",
+      "phase": "repo-init",
+      "order": 13,
+      "task": "Add the remote and verify push and pull both work",
+      "priority": "must",
+      "applies_to": [
+        "all"
+      ],
+      "done": false
+    },
+    {
+      "id": "T030",
+      "phase": "repo-init",
+      "order": 14,
+      "task": "Configure commit signing with GPG or SSH",
+      "priority": "should",
+      "applies_to": [
+        "all"
+      ],
+      "done": false
+    },
+    {
+      "id": "T031",
+      "phase": "repo-init",
+      "order": 15,
+      "task": "Add CODEOWNERS once more than one person touches the code",
+      "priority": "should",
+      "applies_to": [
+        "all"
+      ],
+      "done": false
+    },
+    {
+      "id": "T032",
+      "phase": "repo-init",
+      "order": 16,
+      "task": "Decide monorepo or polyrepo before adding a second package",
+      "priority": "must",
+      "applies_to": [
+        "all"
+      ],
+      "done": false
+    },
+    {
+      "id": "T033",
+      "phase": "repo-init",
+      "order": 17,
+      "task": "Create a docs directory even if it starts nearly empty",
+      "priority": "should",
+      "applies_to": [
+        "all"
+      ],
+      "done": false
+    },
+    {
+      "id": "T034",
+      "phase": "repo-init",
+      "order": 18,
+      "task": "Add a CHANGELOG.md stub",
+      "priority": "should",
+      "applies_to": [
+        "all"
+      ],
+      "done": false
+    },
+    {
+      "id": "T035",
+      "phase": "repo-init",
+      "order": 19,
+      "task": "Record the canonical repository URL in package metadata",
+      "priority": "should",
+      "applies_to": [
+        "all"
+      ],
+      "done": false
+    },
+    {
+      "id": "T036",
+      "phase": "repo-init",
+      "order": 20,
+      "task": "Verify a fresh clone builds on a machine that is not yours",
+      "priority": "must",
+      "applies_to": [
+        "all"
+      ],
+      "done": false
+    },
+    {
+      "id": "T037",
+      "phase": "structure",
+      "order": 1,
+      "task": "Put all source under a single top-level directory",
+      "priority": "must",
+      "applies_to": [
+        "all"
+      ],
+      "done": true
+    },
+    {
+      "id": "T038",
+      "phase": "structure",
+      "order": 2,
+      "task": "Choose tests-alongside-source or a separate tests tree, and stay consistent",
+      "priority": "must",
+      "applies_to": [
+        "all"
+      ],
+      "done": false
+    },
+    {
+      "id": "T039",
+      "phase": "structure",
+      "order": 3,
+      "task": "Separate runnable entrypoints from importable library code",
+      "priority": "should",
+      "applies_to": [
+        "all"
+      ],
+      "done": false
+    },
+    {
+      "id": "T040",
+      "phase": "structure",
+      "order": 4,
+      "task": "Keep config files at the root rather than scattered through the tree",
+      "priority": "should",
+      "applies_to": [
+        "all"
+      ],
+      "done": false
+    },
+    {
+      "id": "T041",
+      "phase": "structure",
+      "order": 5,
+      "task": "Create a scripts directory for development automation",
+      "priority": "should",
+      "applies_to": [
+        "all"
+      ],
+      "done": false
+    },
+    {
+      "id": "T042",
+      "phase": "structure",
+      "order": 6,
+      "task": "Add an examples directory for anything a user must copy to get started",
+      "priority": "should",
+      "applies_to": [
+        "all"
+      ],
+      "done": false
+    },
+    {
+      "id": "T043",
+      "phase": "structure",
+      "order": 7,
+      "task": "Avoid a utils dumping ground; name modules after the domain they serve",
+      "priority": "should",
+      "applies_to": [
+        "all"
+      ],
+      "done": false
+    },
+    {
+      "id": "T044",
+      "phase": "structure",
+      "order": 8,
+      "task": "Set a file-size convention and split modules that outgrow it",
+      "priority": "should",
+      "applies_to": [
+        "all"
+      ],
+      "done": false
+    },
+    {
+      "id": "T045",
+      "phase": "structure",
+      "order": 9,
+      "task": "Define the public API surface explicitly in an index or exports file",
+      "priority": "must",
+      "applies_to": [
+        "all"
+      ],
+      "done": false
+    },
+    {
+      "id": "T046",
+      "phase": "structure",
+      "order": 10,
+      "task": "Mark internal modules as private through naming or tooling",
+      "priority": "should",
+      "applies_to": [
+        "all"
+      ],
+      "done": false
+    },
+    {
+      "id": "T047",
+      "phase": "structure",
+      "order": 11,
+      "task": "Keep generated files out of source directories",
+      "priority": "should",
+      "applies_to": [
+        "all"
+      ],
+      "done": false
+    },
+    {
+      "id": "T048",
+      "phase": "structure",
+      "order": 12,
+      "task": "Keep fixtures and assets in a dedicated directory",
+      "priority": "should",
+      "applies_to": [
+        "all"
+      ],
+      "done": false
+    },
+    {
+      "id": "T049",
+      "phase": "structure",
+      "order": 13,
+      "task": "Document the directory layout where a newcomer will find it",
+      "priority": "should",
+      "applies_to": [
+        "all"
+      ],
+      "done": false
+    },
+    {
+      "id": "T050",
+      "phase": "structure",
+      "order": 14,
+      "task": "Detect and break circular dependencies between top-level modules",
+      "priority": "must",
+      "applies_to": [
+        "all"
+      ],
+      "done": false
+    },
+    {
+      "id": "T051",
+      "phase": "structure",
+      "order": 15,
+      "task": "Isolate and label any vendored third-party code",
+      "priority": "should",
+      "applies_to": [
+        "all"
+      ],
+      "done": false
+    },
+    {
+      "id": "T052",
+      "phase": "structure",
+      "order": 16,
+      "task": "Revisit the structure around the first two thousand lines, before it hardens",
+      "priority": "should",
+      "applies_to": [
+        "all"
+      ],
+      "done": false
+    },
+    {
+      "id": "T053",
+      "phase": "deps",
+      "order": 1,
+      "task": "Choose one package manager and commit its lockfile",
+      "priority": "must",
+      "applies_to": [
+        "all"
+      ],
+      "done": true
+    },
+    {
+      "id": "T054",
+      "phase": "deps",
+      "order": 2,
+      "task": "Pin the toolchain version in a file the tooling reads automatically",
+      "priority": "must",
+      "applies_to": [
+        "all"
+      ],
+      "done": false
+    },
+    {
+      "id": "T055",
+      "phase": "deps",
+      "order": 3,
+      "task": "Decide deliberately whether a library commits its lockfile",
+      "priority": "should",
+      "applies_to": [
+        "all"
+      ],
+      "done": false
+    },
+    {
+      "id": "T056",
+      "phase": "deps",
+      "order": 4,
+      "task": "Separate runtime dependencies from development dependencies",
+      "priority": "must",
+      "applies_to": [
+        "all"
+      ],
+      "done": false
+    },
+    {
+      "id": "T057",
+      "phase": "deps",
+      "order": 5,
+      "task": "Write a one-line justification for every direct dependency",
+      "priority": "should",
+      "applies_to": [
+        "all"
+      ],
+      "done": false
+    },
+    {
+      "id": "T058",
+      "phase": "deps",
+      "order": 6,
+      "task": "Prefer the standard library over a dependency for trivial functionality",
+      "priority": "should",
+      "applies_to": [
+        "all"
+      ],
+      "done": false
+    },
+    {
+      "id": "T059",
+      "phase": "deps",
+      "order": 7,
+      "task": "Check each dependency license for compatibility with yours",
+      "priority": "must",
+      "applies_to": [
+        "all"
+      ],
+      "done": false
+    },
+    {
+      "id": "T060",
+      "phase": "deps",
+      "order": 8,
+      "task": "Check each dependency for recent commits and open maintainership before adding it",
+      "priority": "should",
+      "applies_to": [
+        "all"
+      ],
+      "done": false
+    },
+    {
+      "id": "T061",
+      "phase": "deps",
+      "order": 9,
+      "task": "Set version ranges deliberately rather than accepting the default",
+      "priority": "should",
+      "applies_to": [
+        "all"
+      ],
+      "done": false
+    },
+    {
+      "id": "T062",
+      "phase": "deps",
+      "order": 10,
+      "task": "Watch the transitive dependency count after every addition",
+      "priority": "should",
+      "applies_to": [
+        "all"
+      ],
+      "done": false
+    },
+    {
+      "id": "T063",
+      "phase": "deps",
+      "order": 11,
+      "task": "Enable a vulnerability scanner on the dependency tree",
+      "priority": "must",
+      "applies_to": [
+        "all"
+      ],
+      "done": false
+    },
+    {
+      "id": "T064",
+      "phase": "deps",
+      "order": 12,
+      "task": "Configure automated dependency update pull requests",
+      "priority": "should",
+      "applies_to": [
+        "all"
+      ],
+      "done": false
+    },
+    {
+      "id": "T065",
+      "phase": "deps",
+      "order": 13,
+      "task": "Group update pull requests so review does not become a second job",
+      "priority": "should",
+      "applies_to": [
+        "all"
+      ],
+      "done": false
+    },
+    {
+      "id": "T066",
+      "phase": "deps",
+      "order": 14,
+      "task": "Verify a clean install works with no warm cache",
+      "priority": "must",
+      "applies_to": [
+        "all"
+      ],
+      "done": false
+    },
+    {
+      "id": "T067",
+      "phase": "deps",
+      "order": 15,
+      "task": "Track install time and act when it becomes painful",
+      "priority": "should",
+      "applies_to": [
+        "all"
+      ],
+      "done": false
+    },
+    {
+      "id": "T068",
+      "phase": "deps",
+      "order": 16,
+      "task": "Avoid dependencies needing global system packages unless you document them",
+      "priority": "should",
+      "applies_to": [
+        "all"
+      ],
+      "done": false
+    },
+    {
+      "id": "T069",
+      "phase": "deps",
+      "order": 17,
+      "task": "Document native and system prerequisites explicitly",
+      "priority": "must",
+      "applies_to": [
+        "all"
+      ],
+      "done": false
+    },
+    {
+      "id": "T070",
+      "phase": "deps",
+      "order": 18,
+      "task": "Give every experimental dependency a removal plan",
+      "priority": "should",
+      "applies_to": [
+        "all"
+      ],
+      "done": false
+    },
+    {
+      "id": "T071",
+      "phase": "deps",
+      "order": 19,
+      "task": "Find and remove duplicate dependencies doing the same job",
+      "priority": "should",
+      "applies_to": [
+        "all"
+      ],
+      "done": false
+    },
+    {
+      "id": "T072",
+      "phase": "deps",
+      "order": 20,
+      "task": "Re-resolve the lockfile on a schedule, not only when adding packages",
+      "priority": "should",
+      "applies_to": [
+        "all"
+      ],
+      "done": false
+    },
+    {
+      "id": "T073",
+      "phase": "vcs",
+      "order": 1,
+      "task": "Choose a branching model and write it down where contributors read it",
+      "priority": "must",
+      "applies_to": [
+        "all"
+      ],
+      "done": true
+    },
+    {
+      "id": "T074",
+      "phase": "vcs",
+      "order": 2,
+      "task": "Adopt a commit message convention and enforce it",
+      "priority": "should",
+      "applies_to": [
+        "all"
+      ],
+      "done": true
+    },
+    {
+      "id": "T075",
+      "phase": "vcs",
+      "order": 3,
+      "task": "Keep commits atomic and individually buildable",
+      "priority": "should",
+      "applies_to": [
+        "all"
+      ],
+      "done": false
+    },
+    {
+      "id": "T076",
+      "phase": "vcs",
+      "order": 4,
+      "task": "Write commit bodies that explain why, not what",
+      "priority": "should",
+      "applies_to": [
+        "all"
+      ],
+      "done": false
+    },
+    {
+      "id": "T077",
+      "phase": "vcs",
+      "order": 5,
+      "task": "Protect the default branch",
+      "priority": "must",
+      "applies_to": [
+        "all"
+      ],
+      "done": false
+    },
+    {
+      "id": "T078",
+      "phase": "vcs",
+      "order": 6,
+      "task": "Require pull requests for changes to the default branch",
+      "priority": "must",
+      "applies_to": [
+        "all"
+      ],
+      "done": false
+    },
+    {
+      "id": "T079",
+      "phase": "vcs",
+      "order": 7,
+      "task": "Require status checks to pass before merge",
+      "priority": "must",
+      "applies_to": [
+        "all"
+      ],
+      "done": false
+    },
+    {
+      "id": "T080",
+      "phase": "vcs",
+      "order": 8,
+      "task": "Pick a merge strategy and apply it uniformly",
+      "priority": "should",
+      "applies_to": [
+        "all"
+      ],
+      "done": false
+    },
+    {
+      "id": "T081",
+      "phase": "vcs",
+      "order": 9,
+      "task": "Set a branch naming convention",
+      "priority": "should",
+      "applies_to": [
+        "all"
+      ],
+      "done": false
+    },
+    {
+      "id": "T082",
+      "phase": "vcs",
+      "order": 10,
+      "task": "Delete branches automatically after merge",
+      "priority": "should",
+      "applies_to": [
+        "all"
+      ],
+      "done": false
+    },
+    {
+      "id": "T083",
+      "phase": "vcs",
+      "order": 11,
+      "task": "Require at least one review once a team exists",
+      "priority": "should",
+      "applies_to": [
+        "all"
+      ],
+      "done": false
+    },
+    {
+      "id": "T084",
+      "phase": "vcs",
+      "order": 12,
+      "task": "Add a pull request template with a real checklist",
+      "priority": "should",
+      "applies_to": [
+        "all"
+      ],
+      "done": false
+    },
+    {
+      "id": "T085",
+      "phase": "vcs",
+      "order": 13,
+      "task": "Keep pull requests small enough to review in half an hour",
+      "priority": "should",
+      "applies_to": [
+        "all"
+      ],
+      "done": false
+    },
+    {
+      "id": "T086",
+      "phase": "vcs",
+      "order": 14,
+      "task": "Link every pull request to the issue it closes",
+      "priority": "should",
+      "applies_to": [
+        "all"
+      ],
+      "done": false
+    },
+    {
+      "id": "T087",
+      "phase": "vcs",
+      "order": 15,
+      "task": "Use draft pull requests for in-progress work",
+      "priority": "should",
+      "applies_to": [
+        "all"
+      ],
+      "done": false
+    },
+    {
+      "id": "T088",
+      "phase": "vcs",
+      "order": 16,
+      "task": "Keep large binaries out of history; use LFS or external storage",
+      "priority": "must",
+      "applies_to": [
+        "all"
+      ],
+      "done": false
+    },
+    {
+      "id": "T089",
+      "phase": "vcs",
+      "order": 17,
+      "task": "Set up a pre-commit hook framework",
+      "priority": "should",
+      "applies_to": [
+        "all"
+      ],
+      "done": false
+    },
+    {
+      "id": "T090",
+      "phase": "vcs",
+      "order": 18,
+      "task": "Keep hooks fast and push slow checks to CI",
+      "priority": "should",
+      "applies_to": [
+        "all"
+      ],
+      "done": false
+    },
+    {
+      "id": "T091",
+      "phase": "vcs",
+      "order": 19,
+      "task": "Tag releases and never move a tag once published",
+      "priority": "must",
+      "applies_to": [
+        "all"
+      ],
+      "done": false
+    },
+    {
+      "id": "T092",
+      "phase": "vcs",
+      "order": 20,
+      "task": "Write and test the revert procedure for a bad merge",
+      "priority": "should",
+      "applies_to": [
+        "all"
+      ],
+      "done": false
+    },
+    {
+      "id": "T093",
+      "phase": "quality",
+      "order": 1,
+      "task": "Add a formatter and run it across the whole repo once",
+      "priority": "must",
+      "applies_to": [
+        "all"
+      ],
+      "done": true
+    },
+    {
+      "id": "T094",
+      "phase": "quality",
+      "order": 2,
+      "task": "Fail CI on formatting drift",
+      "priority": "should",
+      "applies_to": [
+        "all"
+      ],
+      "done": false
+    },
+    {
+      "id": "T095",
+      "phase": "quality",
+      "order": 3,
+      "task": "Add a linter with a deliberate ruleset, not just the defaults",
+      "priority": "must",
+      "applies_to": [
+        "all"
+      ],
+      "done": true
+    },
+    {
+      "id": "T096",
+      "phase": "quality",
+      "order": 4,
+      "task": "Add static type checking if the language supports it",
+      "priority": "should",
+      "applies_to": [
+        "all"
+      ],
+      "done": false
+    },
+    {
+      "id": "T097",
+      "phase": "quality",
+      "order": 5,
+      "task": "Turn on strict mode from day one; retrofitting it is far more expensive",
+      "priority": "must",
+      "applies_to": [
+        "all"
+      ],
+      "done": false
+    },
+    {
+      "id": "T098",
+      "phase": "quality",
+      "order": 6,
+      "task": "Require a written reason on every lint suppression",
+      "priority": "should",
+      "applies_to": [
+        "all"
+      ],
+      "done": false
+    },
+    {
+      "id": "T099",
+      "phase": "quality",
+      "order": 7,
+      "task": "Set a cyclomatic complexity ceiling and enforce it",
+      "priority": "should",
+      "applies_to": [
+        "all"
+      ],
+      "done": false
+    },
+    {
+      "id": "T100",
+      "phase": "quality",
+      "order": 8,
+      "task": "Enable dead code detection",
+      "priority": "should",
+      "applies_to": [
+        "all"
+      ],
+      "done": false
+    },
+    {
+      "id": "T101",
+      "phase": "quality",
+      "order": 9,
+      "task": "Enforce import ordering and unused import removal",
+      "priority": "should",
+      "applies_to": [
+        "all"
+      ],
+      "done": false
+    },
+    {
+      "id": "T102",
+      "phase": "quality",
+      "order": 10,
+      "task": "Add a spell checker covering code and docs",
+      "priority": "optional",
+      "applies_to": [
+        "all"
+      ],
+      "done": false
+    },
+    {
+      "id": "T103",
+      "phase": "quality",
+      "order": 11,
+      "task": "Standardize error handling across the repo rather than mixing styles",
+      "priority": "must",
+      "applies_to": [
+        "all"
+      ],
+      "done": false
+    },
+    {
+      "id": "T104",
+      "phase": "quality",
+      "order": 12,
+      "task": "Ban silent swallowing of errors",
+      "priority": "must",
+      "applies_to": [
+        "all"
+      ],
+      "done": false
+    },
+    {
+      "id": "T105",
+      "phase": "quality",
+      "order": 13,
+      "task": "Replace ad-hoc print debugging with a logging convention",
+      "priority": "should",
+      "applies_to": [
+        "all"
+      ],
+      "done": false
+    },
+    {
+      "id": "T106",
+      "phase": "quality",
+      "order": 14,
+      "task": "Write down naming conventions for files, functions, and types",
+      "priority": "should",
+      "applies_to": [
+        "all"
+      ],
+      "done": false
+    },
+    {
+      "id": "T107",
+      "phase": "quality",
+      "order": 15,
+      "task": "Set a function length convention and split what exceeds it",
+      "priority": "should",
+      "applies_to": [
+        "all"
+      ],
+      "done": false
+    },
+    {
+      "id": "T108",
+      "phase": "quality",
+      "order": 16,
+      "task": "Define the null and optional handling policy explicitly",
+      "priority": "should",
+      "applies_to": [
+        "all"
+      ],
+      "done": false
+    },
+    {
+      "id": "T109",
+      "phase": "quality",
+      "order": 17,
+      "task": "Record significant architectural decisions in ADR files",
+      "priority": "should",
+      "applies_to": [
+        "all"
+      ],
+      "done": false
+    },
+    {
+      "id": "T110",
+      "phase": "quality",
+      "order": 18,
+      "task": "Make lint and format runnable locally with one command",
+      "priority": "should",
+      "applies_to": [
+        "all"
+      ],
+      "done": false
+    },
+    {
+      "id": "T111",
+      "phase": "quality",
+      "order": 19,
+      "task": "Keep lint configuration in one file rather than spread across the tree",
+      "priority": "should",
+      "applies_to": [
+        "all"
+      ],
+      "done": false
+    },
+    {
+      "id": "T112",
+      "phase": "quality",
+      "order": 20,
+      "task": "Prune rules that generate noise nobody ever acts on",
+      "priority": "should",
+      "applies_to": [
+        "all"
+      ],
+      "done": false
+    },
+    {
+      "id": "T113",
+      "phase": "quality",
+      "order": 21,
+      "task": "Put a code review checklist in the pull request template",
+      "priority": "should",
+      "applies_to": [
+        "all"
+      ],
+      "done": false
+    },
+    {
+      "id": "T114",
+      "phase": "quality",
+      "order": 22,
+      "task": "Track lint and type debt as a number that trends down",
+      "priority": "should",
+      "applies_to": [
+        "all"
+      ],
+      "done": false
+    },
+    {
+      "id": "T115",
+      "phase": "testing",
+      "order": 1,
+      "task": "Pick a test framework and land one passing test before anything else",
+      "priority": "must",
+      "applies_to": [
+        "all"
+      ],
+      "done": false
+    },
+    {
+      "id": "T116",
+      "phase": "testing",
+      "order": 2,
+      "task": "Make the whole suite run from a single command",
+      "priority": "must",
+      "applies_to": [
+        "all"
+      ],
+      "done": true
+    },
+    {
+      "id": "T117",
+      "phase": "testing",
+      "order": 3,
+      "task": "Write a smoke test that boots or imports the entire thing",
+      "priority": "should",
+      "applies_to": [
+        "all"
+      ],
+      "done": false
+    },
+    {
+      "id": "T118",
+      "phase": "testing",
+      "order": 4,
+      "task": "Add unit tests for pure logic first",
+      "priority": "must",
+      "applies_to": [
+        "all"
+      ],
+      "done": false
+    },
+    {
+      "id": "T119",
+      "phase": "testing",
+      "order": 5,
+      "task": "Add integration tests at every boundary you do not control",
+      "priority": "should",
+      "applies_to": [
+        "all"
+      ],
+      "done": false
+    },
+    {
+      "id": "T120",
+      "phase": "testing",
+      "order": 6,
+      "task": "Limit end-to-end tests to the top few user journeys",
+      "priority": "should",
+      "applies_to": [
+        "all"
+      ],
+      "done": false
+    },
+    {
+      "id": "T121",
+      "phase": "testing",
+      "order": 7,
+      "task": "Shape the test pyramid deliberately instead of letting it drift",
+      "priority": "should",
+      "applies_to": [
+        "all"
+      ],
+      "done": false
+    },
+    {
+      "id": "T122",
+      "phase": "testing",
+      "order": 8,
+      "task": "Make tests deterministic: no wall clock, no live network",
+      "priority": "must",
+      "applies_to": [
+        "all"
+      ],
+      "done": false
+    },
+    {
+      "id": "T123",
+      "phase": "testing",
+      "order": 9,
+      "task": "Freeze time in anything date-dependent",
+      "priority": "should",
+      "applies_to": [
+        "all"
+      ],
+      "done": false
+    },
+    {
+      "id": "T124",
+      "phase": "testing",
+      "order": 10,
+      "task": "Seed randomness so failures reproduce exactly",
+      "priority": "should",
+      "applies_to": [
+        "all"
+      ],
+      "done": false
+    },
+    {
+      "id": "T125",
+      "phase": "testing",
+      "order": 11,
+      "task": "Isolate tests so they pass in any order",
+      "priority": "must",
+      "applies_to": [
+        "all"
+      ],
+      "done": false
+    },
+    {
+      "id": "T126",
+      "phase": "testing",
+      "order": 12,
+      "task": "Run tests in parallel and fix whatever that exposes",
+      "priority": "should",
+      "applies_to": [
+        "all"
+      ],
+      "done": false
+    },
+    {
+      "id": "T127",
+      "phase": "testing",
+      "order": 13,
+      "task": "Use fixtures or factories instead of copy-pasted setup",
+      "priority": "should",
+      "applies_to": [
+        "all"
+      ],
+      "done": false
+    },
+    {
+      "id": "T128",
+      "phase": "testing",
+      "order": 14,
+      "task": "Assert on behavior, not on implementation details",
+      "priority": "must",
+      "applies_to": [
+        "all"
+      ],
+      "done": false
+    },
+    {
+      "id": "T129",
+      "phase": "testing",
+      "order": 15,
+      "task": "Add a regression test for every bug you fix",
+      "priority": "must",
+      "applies_to": [
+        "all"
+      ],
+      "done": false
+    },
+    {
+      "id": "T130",
+      "phase": "testing",
+      "order": 16,
+      "task": "Test error paths as thoroughly as happy paths",
+      "priority": "should",
+      "applies_to": [
+        "all"
+      ],
+      "done": false
+    },
+    {
+      "id": "T131",
+      "phase": "testing",
+      "order": 17,
+      "task": "Test boundary values explicitly",
+      "priority": "should",
+      "applies_to": [
+        "all"
+      ],
+      "done": false
+    },
+    {
+      "id": "T132",
+      "phase": "testing",
+      "order": 18,
+      "task": "Add property-based tests for parsers and pure transforms",
+      "priority": "optional",
+      "applies_to": [
+        "all"
+      ],
+      "done": false
+    },
+    {
+      "id": "T133",
+      "phase": "testing",
+      "order": 19,
+      "task": "Use snapshot tests sparingly and never accept a diff unread",
+      "priority": "optional",
+      "applies_to": [
+        "all"
+      ],
+      "done": false
+    },
+    {
+      "id": "T134",
+      "phase": "testing",
+      "order": 20,
+      "task": "Measure coverage but treat the number as a smell detector, not a target",
+      "priority": "should",
+      "applies_to": [
+        "all"
+      ],
+      "done": false
+    },
+    {
+      "id": "T135",
+      "phase": "testing",
+      "order": 21,
+      "task": "Set a coverage floor that fails CI when it drops",
+      "priority": "should",
+      "applies_to": [
+        "all"
+      ],
+      "done": false
+    },
+    {
+      "id": "T136",
+      "phase": "testing",
+      "order": 22,
+      "task": "Fix flaky tests rather than retrying them",
+      "priority": "must",
+      "applies_to": [
+        "all"
+      ],
+      "done": false
+    },
+    {
+      "id": "T137",
+      "phase": "testing",
+      "order": 23,
+      "task": "Set a wall-clock budget for the full suite and defend it",
+      "priority": "should",
+      "applies_to": [
+        "all"
+      ],
+      "done": false
+    },
+    {
+      "id": "T138",
+      "phase": "testing",
+      "order": 24,
+      "task": "Split fast and slow suites so local runs stay usable",
+      "priority": "should",
+      "applies_to": [
+        "all"
+      ],
+      "done": false
+    },
+    {
+      "id": "T139",
+      "phase": "testing",
+      "order": 25,
+      "task": "Add load or stress tests if the project serves traffic",
+      "priority": "optional",
+      "applies_to": [
+        "all"
+      ],
+      "done": false
+    },
+    {
+      "id": "T140",
+      "phase": "testing",
+      "order": 26,
+      "task": "Test the install and build path itself, not only the code",
+      "priority": "should",
+      "applies_to": [
+        "all"
+      ],
+      "done": false
+    },
+    {
+      "id": "T141",
+      "phase": "testing",
+      "order": 27,
+      "task": "Run the suite against every runtime version you claim to support",
+      "priority": "should",
+      "applies_to": [
+        "all"
+      ],
+      "done": false
+    },
+    {
+      "id": "T142",
+      "phase": "testing",
+      "order": 28,
+      "task": "Test the README quickstart automatically so the docs cannot rot silently",
+      "priority": "must",
+      "applies_to": [
+        "all"
+      ],
+      "done": false
+    },
+    {
+      "id": "T143",
+      "phase": "ci",
+      "order": 1,
+      "task": "Add a pipeline that runs on every push and pull request",
+      "priority": "must",
+      "applies_to": [
+        "all"
+      ],
+      "done": true
+    },
+    {
+      "id": "T144",
+      "phase": "ci",
+      "order": 2,
+      "task": "Make CI run the same commands a developer runs locally",
+      "priority": "must",
+      "applies_to": [
+        "all"
+      ],
+      "done": true
+    },
+    {
+      "id": "T145",
+      "phase": "ci",
+      "order": 3,
+      "task": "Cache dependencies to keep runs fast",
+      "priority": "should",
+      "applies_to": [
+        "all"
+      ],
+      "done": false
+    },
+    {
+      "id": "T146",
+      "phase": "ci",
+      "order": 4,
+      "task": "Set an explicit timeout on every job",
+      "priority": "should",
+      "applies_to": [
+        "all"
+      ],
+      "done": false
+    },
+    {
+      "id": "T147",
+      "phase": "ci",
+      "order": 5,
+      "task": "Run lint before the slow suite so failures come back quickly",
+      "priority": "should",
+      "applies_to": [
+        "all"
+      ],
+      "done": false
+    },
+    {
+      "id": "T148",
+      "phase": "ci",
+      "order": 6,
+      "task": "Run the matrix across every supported operating system",
+      "priority": "should",
+      "applies_to": [
+        "all"
+      ],
+      "done": false
+    },
+    {
+      "id": "T149",
+      "phase": "ci",
+      "order": 7,
+      "task": "Run the matrix across every supported runtime version",
+      "priority": "should",
+      "applies_to": [
+        "all"
+      ],
+      "done": false
+    },
+    {
+      "id": "T150",
+      "phase": "ci",
+      "order": 8,
+      "task": "Add a job that builds the real distributable artifact",
+      "priority": "should",
+      "applies_to": [
+        "all"
+      ],
+      "done": false
+    },
+    {
+      "id": "T151",
+      "phase": "ci",
+      "order": 9,
+      "task": "Upload artifacts and logs from failed runs for debugging",
+      "priority": "should",
+      "applies_to": [
+        "all"
+      ],
+      "done": false
+    },
+    {
+      "id": "T152",
+      "phase": "ci",
+      "order": 10,
+      "task": "Surface test results and coverage on the pull request itself",
+      "priority": "should",
+      "applies_to": [
+        "all"
+      ],
+      "done": false
+    },
+    {
+      "id": "T153",
+      "phase": "ci",
+      "order": 11,
+      "task": "Pin CI actions and images to a SHA or tag, never a floating reference",
+      "priority": "must",
+      "applies_to": [
+        "all"
+      ],
+      "done": false
+    },
+    {
+      "id": "T154",
+      "phase": "ci",
+      "order": 12,
+      "task": "Grant CI the least privilege it needs",
+      "priority": "must",
+      "applies_to": [
+        "all"
+      ],
+      "done": false
+    },
+    {
+      "id": "T155",
+      "phase": "ci",
+      "order": 13,
+      "task": "Never expose secrets to pull requests from forks",
+      "priority": "must",
+      "applies_to": [
+        "all"
+      ],
+      "done": false
+    },
+    {
+      "id": "T156",
+      "phase": "ci",
+      "order": 14,
+      "task": "Add a scheduled nightly run to catch dependency rot",
+      "priority": "should",
+      "applies_to": [
+        "all"
+      ],
+      "done": false
+    },
+    {
+      "id": "T157",
+      "phase": "ci",
+      "order": 15,
+      "task": "Add a job that fails when the lockfile is out of date",
+      "priority": "should",
+      "applies_to": [
+        "all"
+      ],
+      "done": false
+    },
+    {
+      "id": "T158",
+      "phase": "ci",
+      "order": 16,
+      "task": "Add a job that verifies documentation still builds",
+      "priority": "should",
+      "applies_to": [
+        "all"
+      ],
+      "done": false
+    },
+    {
+      "id": "T159",
+      "phase": "ci",
+      "order": 17,
+      "task": "Keep the required-checks list short and meaningful",
+      "priority": "should",
+      "applies_to": [
+        "all"
+      ],
+      "done": false
+    },
+    {
+      "id": "T160",
+      "phase": "ci",
+      "order": 18,
+      "task": "Use concurrency groups so new pushes cancel stale runs",
+      "priority": "should",
+      "applies_to": [
+        "all"
+      ],
+      "done": false
+    },
+    {
+      "id": "T161",
+      "phase": "ci",
+      "order": 19,
+      "task": "Track pipeline duration and treat regressions as bugs",
+      "priority": "should",
+      "applies_to": [
+        "all"
+      ],
+      "done": false
+    },
+    {
+      "id": "T162",
+      "phase": "ci",
+      "order": 20,
+      "task": "Split large workflow files into reusable, reviewable pieces",
+      "priority": "should",
+      "applies_to": [
+        "all"
+      ],
+      "done": false
+    },
+    {
+      "id": "T163",
+      "phase": "ci",
+      "order": 21,
+      "task": "Add a manual-dispatch workflow for one-off maintenance tasks",
+      "priority": "optional",
+      "applies_to": [
+        "all"
+      ],
+      "done": false
+    },
+    {
+      "id": "T164",
+      "phase": "ci",
+      "order": 22,
+      "task": "Alert on repeated failures on the default branch",
+      "priority": "should",
+      "applies_to": [
+        "all"
+      ],
+      "done": false
+    },
+    {
+      "id": "T165",
+      "phase": "ci",
+      "order": 23,
+      "task": "Document how to reproduce a CI failure on a local machine",
+      "priority": "should",
+      "applies_to": [
+        "all"
+      ],
+      "done": false
+    },
+    {
+      "id": "T166",
+      "phase": "ci",
+      "order": 24,
+      "task": "Monitor CI spend against a budget",
+      "priority": "should",
+      "applies_to": [
+        "all"
+      ],
+      "done": false
+    },
+    {
+      "id": "T167",
+      "phase": "security",
+      "order": 1,
+      "task": "Verify no secret has ever been committed, including in history",
+      "priority": "must",
+      "applies_to": [
+        "all"
+      ],
+      "done": true
+    },
+    {
+      "id": "T168",
+      "phase": "security",
+      "order": 2,
+      "task": "Run secret scanning in both pre-commit and CI",
+      "priority": "must",
+      "applies_to": [
+        "all"
+      ],
+      "done": false
+    },
+    {
+      "id": "T169",
+      "phase": "security",
+      "order": 3,
+      "task": "Rotate any credential that ever touched the repository",
+      "priority": "must",
+      "applies_to": [
+        "all"
+      ],
+      "done": false
+    },
+    {
+      "id": "T170",
+      "phase": "security",
+      "order": 4,
+      "task": "Enable dependency vulnerability alerts",
+      "priority": "must",
+      "applies_to": [
+        "all"
+      ],
+      "done": false
+    },
+    {
+      "id": "T171",
+      "phase": "security",
+      "order": 5,
+      "task": "Add static application security testing to the pipeline",
+      "priority": "should",
+      "applies_to": [
+        "all"
+      ],
+      "done": false
+    },
+    {
+      "id": "T172",
+      "phase": "security",
+      "order": 6,
+      "task": "Generate a software bill of materials for each release",
+      "priority": "should",
+      "applies_to": [
+        "all"
+      ],
+      "done": false
+    },
+    {
+      "id": "T173",
+      "phase": "security",
+      "order": 7,
+      "task": "Validate and sanitize external input at the boundary",
+      "priority": "must",
+      "applies_to": [
+        "all"
+      ],
+      "done": false
+    },
+    {
+      "id": "T174",
+      "phase": "security",
+      "order": 8,
+      "task": "Use parameterized queries; never build SQL by string concatenation",
+      "priority": "must",
+      "applies_to": [
+        "all"
+      ],
+      "done": false
+    },
+    {
+      "id": "T175",
+      "phase": "security",
+      "order": 9,
+      "task": "Encode output according to its destination context",
+      "priority": "should",
+      "applies_to": [
+        "all"
+      ],
+      "done": false
+    },
+    {
+      "id": "T176",
+      "phase": "security",
+      "order": 10,
+      "task": "Default to deny and require explicit opt-in for permissive behavior",
+      "priority": "must",
+      "applies_to": [
+        "all"
+      ],
+      "done": false
+    },
+    {
+      "id": "T177",
+      "phase": "security",
+      "order": 11,
+      "task": "Check authentication and authorization separately, and test both",
+      "priority": "must",
+      "applies_to": [
+        "all"
+      ],
+      "done": false
+    },
+    {
+      "id": "T178",
+      "phase": "security",
+      "order": 12,
+      "task": "Use vetted cryptographic libraries; never hand-roll primitives",
+      "priority": "must",
+      "applies_to": [
+        "all"
+      ],
+      "done": false
+    },
+    {
+      "id": "T179",
+      "phase": "security",
+      "order": 13,
+      "task": "Hash passwords with a modern memory-hard key derivation function",
+      "priority": "must",
+      "applies_to": [
+        "all"
+      ],
+      "done": false
+    },
+    {
+      "id": "T180",
+      "phase": "security",
+      "order": 14,
+      "task": "Set HTTP security headers if the project serves web content",
+      "priority": "should",
+      "applies_to": [
+        "all"
+      ],
+      "done": false
+    },
+    {
+      "id": "T181",
+      "phase": "security",
+      "order": 15,
+      "task": "Configure CORS to a specific allowlist rather than a wildcard",
+      "priority": "should",
+      "applies_to": [
+        "all"
+      ],
+      "done": false
+    },
+    {
+      "id": "T182",
+      "phase": "security",
+      "order": 16,
+      "task": "Rate limit every publicly reachable entrypoint",
+      "priority": "should",
+      "applies_to": [
+        "all"
+      ],
+      "done": false
+    },
+    {
+      "id": "T183",
+      "phase": "security",
+      "order": 17,
+      "task": "Keep tokens, personal data, and full request bodies out of logs",
+      "priority": "must",
+      "applies_to": [
+        "all"
+      ],
+      "done": false
+    },
+    {
+      "id": "T184",
+      "phase": "security",
+      "order": 18,
+      "task": "Fail the build on known critical vulnerabilities in dependencies",
+      "priority": "should",
+      "applies_to": [
+        "all"
+      ],
+      "done": false
+    },
+    {
+      "id": "T185",
+      "phase": "security",
+      "order": 19,
+      "task": "Run containers as a non-root user",
+      "priority": "should",
+      "applies_to": [
+        "all"
+      ],
+      "done": false
+    },
+    {
+      "id": "T186",
+      "phase": "security",
+      "order": 20,
+      "task": "Keep base images minimal and refresh them regularly",
+      "priority": "should",
+      "applies_to": [
+        "all"
+      ],
+      "done": false
+    },
+    {
+      "id": "T187",
+      "phase": "security",
+      "order": 21,
+      "task": "Add SECURITY.md with a disclosure contact and expected response time",
+      "priority": "should",
+      "applies_to": [
+        "all"
+      ],
+      "done": false
+    },
+    {
+      "id": "T188",
+      "phase": "security",
+      "order": 22,
+      "task": "Define a triage and patch timeline for reported vulnerabilities",
+      "priority": "should",
+      "applies_to": [
+        "all"
+      ],
+      "done": false
+    },
+    {
+      "id": "T189",
+      "phase": "security",
+      "order": 23,
+      "task": "Review CI tokens and deploy key permissions on a schedule",
+      "priority": "should",
+      "applies_to": [
+        "all"
+      ],
+      "done": false
+    },
+    {
+      "id": "T190",
+      "phase": "security",
+      "order": 24,
+      "task": "Require two-factor authentication across the repository or org",
+      "priority": "should",
+      "applies_to": [
+        "all"
+      ],
+      "done": false
+    },
+    {
+      "id": "T191",
+      "phase": "security",
+      "order": 25,
+      "task": "Sign release artifacts and publish checksums",
+      "priority": "should",
+      "applies_to": [
+        "all"
+      ],
+      "done": false
+    },
+    {
+      "id": "T192",
+      "phase": "security",
+      "order": 26,
+      "task": "Threat-model the top few abuse cases before launch",
+      "priority": "must",
+      "applies_to": [
+        "all"
+      ],
+      "done": false
+    },
+    {
+      "id": "T193",
+      "phase": "config",
+      "order": 1,
+      "task": "Read configuration from the environment rather than hardcoding it",
+      "priority": "must",
+      "applies_to": [
+        "app",
+        "service",
+        "cli"
+      ],
+      "done": false
+    },
+    {
+      "id": "T194",
+      "phase": "config",
+      "order": 2,
+      "task": "Ship a .env.example listing every key with a safe placeholder",
+      "priority": "must",
+      "applies_to": [
+        "app",
+        "service",
+        "cli"
+      ],
+      "done": false
+    },
+    {
+      "id": "T195",
+      "phase": "config",
+      "order": 3,
+      "task": "Validate configuration at startup and fail loudly on anything missing",
+      "priority": "must",
+      "applies_to": [
+        "app",
+        "service",
+        "cli"
+      ],
+      "done": false
+    },
+    {
+      "id": "T196",
+      "phase": "config",
+      "order": 4,
+      "task": "Document every key with its type, default, and effect",
+      "priority": "should",
+      "applies_to": [
+        "app",
+        "service",
+        "cli"
+      ],
+      "done": false
+    },
+    {
+      "id": "T197",
+      "phase": "config",
+      "order": 5,
+      "task": "Keep production secrets in a secret manager, not in env files",
+      "priority": "must",
+      "applies_to": [
+        "app",
+        "service",
+        "cli"
+      ],
+      "done": false
+    },
+    {
+      "id": "T198",
+      "phase": "config",
+      "order": 6,
+      "task": "Separate configuration by environment",
+      "priority": "should",
+      "applies_to": [
+        "app",
+        "service",
+        "cli"
+      ],
+      "done": false
+    },
+    {
+      "id": "T199",
+      "phase": "config",
+      "order": 7,
+      "task": "Make local development work without external accounts wherever possible",
+      "priority": "should",
+      "applies_to": [
+        "app",
+        "service",
+        "cli"
+      ],
+      "done": false
+    },
+    {
+      "id": "T200",
+      "phase": "config",
+      "order": 8,
+      "task": "Provide defaults good enough that the common case needs no configuration",
+      "priority": "should",
+      "applies_to": [
+        "app",
+        "service",
+        "cli"
+      ],
+      "done": false
+    },
+    {
+      "id": "T201",
+      "phase": "config",
+      "order": 9,
+      "task": "Never let a default value point at a production resource",
+      "priority": "must",
+      "applies_to": [
+        "app",
+        "service",
+        "cli"
+      ],
+      "done": false
+    },
+    {
+      "id": "T202",
+      "phase": "config",
+      "order": 10,
+      "task": "Make feature flags explicit and removable",
+      "priority": "should",
+      "applies_to": [
+        "app",
+        "service",
+        "cli"
+      ],
+      "done": false
+    },
+    {
+      "id": "T203",
+      "phase": "config",
+      "order": 11,
+      "task": "Record a removal date for every temporary flag",
+      "priority": "should",
+      "applies_to": [
+        "app",
+        "service",
+        "cli"
+      ],
+      "done": false
+    },
+    {
+      "id": "T204",
+      "phase": "config",
+      "order": 12,
+      "task": "Avoid configuration that changes behavior in ways no test covers",
+      "priority": "should",
+      "applies_to": [
+        "app",
+        "service",
+        "cli"
+      ],
+      "done": false
+    },
+    {
+      "id": "T205",
+      "phase": "config",
+      "order": 13,
+      "task": "Log the effective configuration at startup with secrets redacted",
+      "priority": "should",
+      "applies_to": [
+        "app",
+        "service",
+        "cli"
+      ],
+      "done": false
+    },
+    {
+      "id": "T206",
+      "phase": "config",
+      "order": 14,
+      "task": "Version the configuration schema alongside the code",
+      "priority": "should",
+      "applies_to": [
+        "app",
+        "service",
+        "cli"
+      ],
+      "done": false
+    },
+    {
+      "id": "T207",
+      "phase": "config",
+      "order": 15,
+      "task": "Provide a migration path when configuration keys change",
+      "priority": "should",
+      "applies_to": [
+        "app",
+        "service",
+        "cli"
+      ],
+      "done": false
+    },
+    {
+      "id": "T208",
+      "phase": "config",
+      "order": 16,
+      "task": "Support configuration reload, or document that a restart is required",
+      "priority": "should",
+      "applies_to": [
+        "app",
+        "service",
+        "cli"
+      ],
+      "done": false
+    },
+    {
+      "id": "T209",
+      "phase": "config",
+      "order": 17,
+      "task": "Make timeouts, retries, and limits configurable instead of magic numbers",
+      "priority": "should",
+      "applies_to": [
+        "app",
+        "service",
+        "cli"
+      ],
+      "done": false
+    },
+    {
+      "id": "T210",
+      "phase": "config",
+      "order": 18,
+      "task": "Test that the project boots with only the required keys set",
+      "priority": "should",
+      "applies_to": [
+        "app",
+        "service",
+        "cli"
+      ],
+      "done": false
+    },
+    {
+      "id": "T211",
+      "phase": "docs",
+      "order": 1,
+      "task": "Draft the README before writing the implementation",
+      "priority": "must",
+      "applies_to": [
+        "all"
+      ],
+      "done": true
+    },
+    {
+      "id": "T212",
+      "phase": "docs",
+      "order": 2,
+      "task": "Open the README with what it is and who it is for, in two sentences",
+      "priority": "must",
+      "applies_to": [
+        "all"
+      ],
+      "done": true
+    },
+    {
+      "id": "T213",
+      "phase": "docs",
+      "order": 3,
+      "task": "Add a quickstart that works by copy-paste in under five minutes",
+      "priority": "must",
+      "applies_to": [
+        "all"
+      ],
+      "done": true
+    },
+    {
+      "id": "T214",
+      "phase": "docs",
+      "order": 4,
+      "task": "State prerequisites and supported platforms explicitly",
+      "priority": "should",
+      "applies_to": [
+        "all"
+      ],
+      "done": true
+    },
+    {
+      "id": "T215",
+      "phase": "docs",
+      "order": 5,
+      "task": "Show one realistic example rather than a trivial one",
+      "priority": "should",
+      "applies_to": [
+        "all"
+      ],
+      "done": false
+    },
+    {
+      "id": "T216",
+      "phase": "docs",
+      "order": 6,
+      "task": "Document installation for every supported method",
+      "priority": "should",
+      "applies_to": [
+        "all"
+      ],
+      "done": false
+    },
+    {
+      "id": "T217",
+      "phase": "docs",
+      "order": 7,
+      "task": "Add a troubleshooting section covering the most common failures",
+      "priority": "should",
+      "applies_to": [
+        "all"
+      ],
+      "done": false
+    },
+    {
+      "id": "T218",
+      "phase": "docs",
+      "order": 8,
+      "task": "Document the entire public API surface",
+      "priority": "must",
+      "applies_to": [
+        "all"
+      ],
+      "done": false
+    },
+    {
+      "id": "T219",
+      "phase": "docs",
+      "order": 9,
+      "task": "Generate API reference from source so it cannot drift",
+      "priority": "should",
+      "applies_to": [
+        "all"
+      ],
+      "done": false
+    },
+    {
+      "id": "T220",
+      "phase": "docs",
+      "order": 10,
+      "task": "Write architecture docs that explain why, not what",
+      "priority": "should",
+      "applies_to": [
+        "all"
+      ],
+      "done": false
+    },
+    {
+      "id": "T221",
+      "phase": "docs",
+      "order": 11,
+      "task": "Add CONTRIBUTING.md with the exact commands for a working dev setup",
+      "priority": "must",
+      "applies_to": [
+        "all"
+      ],
+      "done": false
+    },
+    {
+      "id": "T222",
+      "phase": "docs",
+      "order": 12,
+      "task": "Put the test, lint, and build commands in one discoverable place",
+      "priority": "should",
+      "applies_to": [
+        "all"
+      ],
+      "done": false
+    },
+    {
+      "id": "T223",
+      "phase": "docs",
+      "order": 13,
+      "task": "Keep the changelog current with every release",
+      "priority": "must",
+      "applies_to": [
+        "all"
+      ],
+      "done": false
+    },
+    {
+      "id": "T224",
+      "phase": "docs",
+      "order": 14,
+      "task": "Build the FAQ from questions people actually ask",
+      "priority": "should",
+      "applies_to": [
+        "all"
+      ],
+      "done": false
+    },
+    {
+      "id": "T225",
+      "phase": "docs",
+      "order": 15,
+      "task": "Document known limitations honestly",
+      "priority": "must",
+      "applies_to": [
+        "all"
+      ],
+      "done": false
+    },
+    {
+      "id": "T226",
+      "phase": "docs",
+      "order": 16,
+      "task": "Write a migration guide for every breaking change",
+      "priority": "should",
+      "applies_to": [
+        "all"
+      ],
+      "done": false
+    },
+    {
+      "id": "T227",
+      "phase": "docs",
+      "order": 17,
+      "task": "Add a diagram for anything with more than three moving parts",
+      "priority": "should",
+      "applies_to": [
+        "all"
+      ],
+      "done": false
+    },
+    {
+      "id": "T228",
+      "phase": "docs",
+      "order": 18,
+      "task": "Version the documentation alongside releases",
+      "priority": "should",
+      "applies_to": [
+        "all"
+      ],
+      "done": false
+    },
+    {
+      "id": "T229",
+      "phase": "docs",
+      "order": 19,
+      "task": "Verify every code sample in the docs automatically",
+      "priority": "should",
+      "applies_to": [
+        "all"
+      ],
+      "done": false
+    },
+    {
+      "id": "T230",
+      "phase": "docs",
+      "order": 20,
+      "task": "Add a glossary if the domain carries jargon",
+      "priority": "optional",
+      "applies_to": [
+        "all"
+      ],
+      "done": false
+    },
+    {
+      "id": "T231",
+      "phase": "docs",
+      "order": 21,
+      "task": "Publish the deprecation policy",
+      "priority": "should",
+      "applies_to": [
+        "all"
+      ],
+      "done": false
+    },
+    {
+      "id": "T232",
+      "phase": "docs",
+      "order": 22,
+      "task": "Add badges only where they convey real status",
+      "priority": "optional",
+      "applies_to": [
+        "all"
+      ],
+      "done": false
+    },
+    {
+      "id": "T233",
+      "phase": "docs",
+      "order": 23,
+      "task": "Assign a documentation owner; stale docs are worse than none",
+      "priority": "should",
+      "applies_to": [
+        "all"
+      ],
+      "done": false
+    },
+    {
+      "id": "T234",
+      "phase": "docs",
+      "order": 24,
+      "task": "Update docs in the same pull request that changes behavior",
+      "priority": "must",
+      "applies_to": [
+        "all"
+      ],
+      "done": false
+    },
+    {
+      "id": "T235",
+      "phase": "legal",
+      "order": 1,
+      "task": "Choose a license deliberately and understand what it obligates you to",
+      "priority": "must",
+      "applies_to": [
+        "all"
+      ],
+      "done": true
+    },
+    {
+      "id": "T236",
+      "phase": "legal",
+      "order": 2,
+      "task": "Place the LICENSE file at the repository root",
+      "priority": "must",
+      "applies_to": [
+        "all"
+      ],
+      "done": true
+    },
+    {
+      "id": "T237",
+      "phase": "legal",
+      "order": 3,
+      "task": "Add license headers to source files if the license expects them",
+      "priority": "should",
+      "applies_to": [
+        "all"
+      ],
+      "done": false
+    },
+    {
+      "id": "T238",
+      "phase": "legal",
+      "order": 4,
+      "task": "Verify every dependency license is compatible with yours",
+      "priority": "must",
+      "applies_to": [
+        "all"
+      ],
+      "done": false
+    },
+    {
+      "id": "T239",
+      "phase": "legal",
+      "order": 5,
+      "task": "Add a NOTICE file where dependencies require attribution",
+      "priority": "should",
+      "applies_to": [
+        "all"
+      ],
+      "done": false
+    },
+    {
+      "id": "T240",
+      "phase": "legal",
+      "order": 6,
+      "task": "Confirm you actually own the code, including under any employment agreement",
+      "priority": "must",
+      "applies_to": [
+        "all"
+      ],
+      "done": false
+    },
+    {
+      "id": "T241",
+      "phase": "legal",
+      "order": 7,
+      "task": "Add a CLA or DCO before accepting outside contributions",
+      "priority": "should",
+      "applies_to": [
+        "all"
+      ],
+      "done": false
+    },
+    {
+      "id": "T242",
+      "phase": "legal",
+      "order": 8,
+      "task": "Check the project name against existing trademarks",
+      "priority": "should",
+      "applies_to": [
+        "all"
+      ],
+      "done": false
+    },
+    {
+      "id": "T243",
+      "phase": "legal",
+      "order": 9,
+      "task": "Document data handling and retention if the project touches user data",
+      "priority": "should",
+      "applies_to": [
+        "all"
+      ],
+      "done": false
+    },
+    {
+      "id": "T244",
+      "phase": "legal",
+      "order": 10,
+      "task": "Link a privacy policy if the project collects anything",
+      "priority": "should",
+      "applies_to": [
+        "all"
+      ],
+      "done": false
+    },
+    {
+      "id": "T245",
+      "phase": "legal",
+      "order": 11,
+      "task": "Check export control constraints if cryptography is involved",
+      "priority": "optional",
+      "applies_to": [
+        "all"
+      ],
+      "done": false
+    },
+    {
+      "id": "T246",
+      "phase": "legal",
+      "order": 12,
+      "task": "Record licenses for third-party fonts, icons, and images",
+      "priority": "should",
+      "applies_to": [
+        "all"
+      ],
+      "done": false
+    },
+    {
+      "id": "T247",
+      "phase": "build",
+      "order": 1,
+      "task": "Make one command produce the distributable artifact",
+      "priority": "must",
+      "applies_to": [
+        "all"
+      ],
+      "done": false
+    },
+    {
+      "id": "T248",
+      "phase": "build",
+      "order": 2,
+      "task": "Make builds reproducible from a clean checkout",
+      "priority": "must",
+      "applies_to": [
+        "all"
+      ],
+      "done": false
+    },
+    {
+      "id": "T249",
+      "phase": "build",
+      "order": 3,
+      "task": "Remove every build step that depends on your local machine state",
+      "priority": "must",
+      "applies_to": [
+        "all"
+      ],
+      "done": false
+    },
+    {
+      "id": "T250",
+      "phase": "build",
+      "order": 4,
+      "task": "Separate development and production builds explicitly",
+      "priority": "should",
+      "applies_to": [
+        "all"
+      ],
+      "done": false
+    },
+    {
+      "id": "T251",
+      "phase": "build",
+      "order": 5,
+      "task": "Decide deliberately whether debug symbols and source maps ship",
+      "priority": "should",
+      "applies_to": [
+        "all"
+      ],
+      "done": false
+    },
+    {
+      "id": "T252",
+      "phase": "build",
+      "order": 6,
+      "task": "Set an artifact size budget and monitor it",
+      "priority": "should",
+      "applies_to": [
+        "all"
+      ],
+      "done": false
+    },
+    {
+      "id": "T253",
+      "phase": "build",
+      "order": 7,
+      "task": "Verify the built artifact runs, not merely that it built",
+      "priority": "must",
+      "applies_to": [
+        "all"
+      ],
+      "done": false
+    },
+    {
+      "id": "T254",
+      "phase": "build",
+      "order": 8,
+      "task": "Build for every platform you claim to support",
+      "priority": "should",
+      "applies_to": [
+        "all"
+      ],
+      "done": false
+    },
+    {
+      "id": "T255",
+      "phase": "build",
+      "order": 9,
+      "task": "Add a container definition if deployment involves containers",
+      "priority": "should",
+      "applies_to": [
+        "all"
+      ],
+      "done": false
+    },
+    {
+      "id": "T256",
+      "phase": "build",
+      "order": 10,
+      "task": "Use multi-stage builds to keep images small",
+      "priority": "should",
+      "applies_to": [
+        "all"
+      ],
+      "done": false
+    },
+    {
+      "id": "T257",
+      "phase": "build",
+      "order": 11,
+      "task": "Pin base image digests",
+      "priority": "should",
+      "applies_to": [
+        "all"
+      ],
+      "done": false
+    },
+    {
+      "id": "T258",
+      "phase": "build",
+      "order": 12,
+      "task": "Order build steps so caching actually helps",
+      "priority": "should",
+      "applies_to": [
+        "all"
+      ],
+      "done": false
+    },
+    {
+      "id": "T259",
+      "phase": "build",
+      "order": 13,
+      "task": "Declare exactly which files the published package includes",
+      "priority": "must",
+      "applies_to": [
+        "all"
+      ],
+      "done": false
+    },
+    {
+      "id": "T260",
+      "phase": "build",
+      "order": 14,
+      "task": "Confirm no secrets or test fixtures ship inside the artifact",
+      "priority": "must",
+      "applies_to": [
+        "all"
+      ],
+      "done": false
+    },
+    {
+      "id": "T261",
+      "phase": "build",
+      "order": 15,
+      "task": "Install the artifact from a clean environment as a final check",
+      "priority": "should",
+      "applies_to": [
+        "all"
+      ],
+      "done": false
+    },
+    {
+      "id": "T262",
+      "phase": "build",
+      "order": 16,
+      "task": "Document the build process for someone who is not you",
+      "priority": "should",
+      "applies_to": [
+        "all"
+      ],
+      "done": false
+    },
+    {
+      "id": "T263",
+      "phase": "release",
+      "order": 1,
+      "task": "Adopt semantic versioning and define what you count as breaking",
+      "priority": "must",
+      "applies_to": [
+        "library",
+        "app",
+        "cli"
+      ],
+      "done": false
+    },
+    {
+      "id": "T264",
+      "phase": "release",
+      "order": 2,
+      "task": "Automate version bumping instead of hand-editing files",
+      "priority": "should",
+      "applies_to": [
+        "library",
+        "app",
+        "cli"
+      ],
+      "done": false
+    },
+    {
+      "id": "T265",
+      "phase": "release",
+      "order": 3,
+      "task": "Generate release notes from commits or pull request labels",
+      "priority": "should",
+      "applies_to": [
+        "library",
+        "app",
+        "cli"
+      ],
+      "done": false
+    },
+    {
+      "id": "T266",
+      "phase": "release",
+      "order": 4,
+      "task": "Tag every release in git",
+      "priority": "must",
+      "applies_to": [
+        "library",
+        "app",
+        "cli"
+      ],
+      "done": false
+    },
+    {
+      "id": "T267",
+      "phase": "release",
+      "order": 5,
+      "task": "Require the full matrix to pass before publishing",
+      "priority": "must",
+      "applies_to": [
+        "library",
+        "app",
+        "cli"
+      ],
+      "done": false
+    },
+    {
+      "id": "T268",
+      "phase": "release",
+      "order": 6,
+      "task": "Publish from CI, never from a laptop",
+      "priority": "must",
+      "applies_to": [
+        "library",
+        "app",
+        "cli"
+      ],
+      "done": false
+    },
+    {
+      "id": "T269",
+      "phase": "release",
+      "order": 7,
+      "task": "Use a scoped, short-lived publishing token",
+      "priority": "must",
+      "applies_to": [
+        "library",
+        "app",
+        "cli"
+      ],
+      "done": false
+    },
+    {
+      "id": "T270",
+      "phase": "release",
+      "order": 8,
+      "task": "Do a dry-run publish before the real one",
+      "priority": "should",
+      "applies_to": [
+        "library",
+        "app",
+        "cli"
+      ],
+      "done": false
+    },
+    {
+      "id": "T271",
+      "phase": "release",
+      "order": 9,
+      "task": "Install the published artifact fresh to verify it",
+      "priority": "should",
+      "applies_to": [
+        "library",
+        "app",
+        "cli"
+      ],
+      "done": false
+    },
+    {
+      "id": "T272",
+      "phase": "release",
+      "order": 10,
+      "task": "Announce breaking changes before shipping them",
+      "priority": "should",
+      "applies_to": [
+        "library",
+        "app",
+        "cli"
+      ],
+      "done": false
+    },
+    {
+      "id": "T273",
+      "phase": "release",
+      "order": 11,
+      "task": "Give every removal at least one deprecation cycle",
+      "priority": "should",
+      "applies_to": [
+        "library",
+        "app",
+        "cli"
+      ],
+      "done": false
+    },
+    {
+      "id": "T274",
+      "phase": "release",
+      "order": 12,
+      "task": "Maintain a supported-versions table",
+      "priority": "should",
+      "applies_to": [
+        "library",
+        "app",
+        "cli"
+      ],
+      "done": false
+    },
+    {
+      "id": "T275",
+      "phase": "release",
+      "order": 13,
+      "task": "Publish prereleases on a separate channel",
+      "priority": "should",
+      "applies_to": [
+        "library",
+        "app",
+        "cli"
+      ],
+      "done": false
+    },
+    {
+      "id": "T276",
+      "phase": "release",
+      "order": 14,
+      "task": "Document the yank or unpublish procedure before you need it",
+      "priority": "should",
+      "applies_to": [
+        "library",
+        "app",
+        "cli"
+      ],
+      "done": false
+    },
+    {
+      "id": "T277",
+      "phase": "release",
+      "order": 15,
+      "task": "Write release notes for users rather than for yourself",
+      "priority": "should",
+      "applies_to": [
+        "library",
+        "app",
+        "cli"
+      ],
+      "done": false
+    },
+    {
+      "id": "T278",
+      "phase": "release",
+      "order": 16,
+      "task": "Include upgrade instructions in every major release",
+      "priority": "should",
+      "applies_to": [
+        "library",
+        "app",
+        "cli"
+      ],
+      "done": false
+    },
+    {
+      "id": "T279",
+      "phase": "release",
+      "order": 17,
+      "task": "Archive release artifacts alongside their checksums",
+      "priority": "should",
+      "applies_to": [
+        "library",
+        "app",
+        "cli"
+      ],
+      "done": false
+    },
+    {
+      "id": "T280",
+      "phase": "release",
+      "order": 18,
+      "task": "Confirm the docs site reflects the new version after publishing",
+      "priority": "should",
+      "applies_to": [
+        "library",
+        "app",
+        "cli"
+      ],
+      "done": false
+    },
+    {
+      "id": "T281",
+      "phase": "deploy",
+      "order": 1,
+      "task": "Define the target environments and how they differ",
+      "priority": "must",
+      "applies_to": [
+        "app",
+        "service"
+      ],
+      "done": false
+    },
+    {
+      "id": "T282",
+      "phase": "deploy",
+      "order": 2,
+      "task": "Automate deployment; no manual file copying",
+      "priority": "must",
+      "applies_to": [
+        "app",
+        "service"
+      ],
+      "done": false
+    },
+    {
+      "id": "T283",
+      "phase": "deploy",
+      "order": 3,
+      "task": "Make deploys idempotent and repeatable",
+      "priority": "must",
+      "applies_to": [
+        "app",
+        "service"
+      ],
+      "done": false
+    },
+    {
+      "id": "T284",
+      "phase": "deploy",
+      "order": 4,
+      "task": "Deploy staging through the same pipeline as production",
+      "priority": "should",
+      "applies_to": [
+        "app",
+        "service"
+      ],
+      "done": false
+    },
+    {
+      "id": "T285",
+      "phase": "deploy",
+      "order": 5,
+      "task": "Expose a health check the platform can act on",
+      "priority": "must",
+      "applies_to": [
+        "app",
+        "service"
+      ],
+      "done": false
+    },
+    {
+      "id": "T286",
+      "phase": "deploy",
+      "order": 6,
+      "task": "Gate promotion on health checks passing",
+      "priority": "should",
+      "applies_to": [
+        "app",
+        "service"
+      ],
+      "done": false
+    },
+    {
+      "id": "T287",
+      "phase": "deploy",
+      "order": 7,
+      "task": "Implement zero-downtime deploys or document the maintenance window",
+      "priority": "should",
+      "applies_to": [
+        "app",
+        "service"
+      ],
+      "done": false
+    },
+    {
+      "id": "T288",
+      "phase": "deploy",
+      "order": 8,
+      "task": "Write and rehearse the rollback procedure",
+      "priority": "must",
+      "applies_to": [
+        "app",
+        "service"
+      ],
+      "done": false
+    },
+    {
+      "id": "T289",
+      "phase": "deploy",
+      "order": 9,
+      "task": "Keep database migrations backward compatible for at least one release",
+      "priority": "must",
+      "applies_to": [
+        "app",
+        "service"
+      ],
+      "done": false
+    },
+    {
+      "id": "T290",
+      "phase": "deploy",
+      "order": 10,
+      "task": "Run migrations as a step separate from the application deploy",
+      "priority": "should",
+      "applies_to": [
+        "app",
+        "service"
+      ],
+      "done": false
+    },
+    {
+      "id": "T291",
+      "phase": "deploy",
+      "order": 11,
+      "task": "Set resource limits and scaling rules deliberately",
+      "priority": "should",
+      "applies_to": [
+        "app",
+        "service"
+      ],
+      "done": false
+    },
+    {
+      "id": "T292",
+      "phase": "deploy",
+      "order": 12,
+      "task": "Configure backups and prove a restore actually works",
+      "priority": "must",
+      "applies_to": [
+        "app",
+        "service"
+      ],
+      "done": false
+    },
+    {
+      "id": "T293",
+      "phase": "deploy",
+      "order": 13,
+      "task": "Write a disaster recovery plan with a recovery time and point objective",
+      "priority": "should",
+      "applies_to": [
+        "app",
+        "service"
+      ],
+      "done": false
+    },
+    {
+      "id": "T294",
+      "phase": "deploy",
+      "order": 14,
+      "task": "Manage infrastructure as code rather than console clicks",
+      "priority": "should",
+      "applies_to": [
+        "app",
+        "service"
+      ],
+      "done": false
+    },
+    {
+      "id": "T295",
+      "phase": "deploy",
+      "order": 15,
+      "task": "Track which version is deployed in which environment",
+      "priority": "should",
+      "applies_to": [
+        "app",
+        "service"
+      ],
+      "done": false
+    },
+    {
+      "id": "T296",
+      "phase": "deploy",
+      "order": 16,
+      "task": "Restrict who can deploy to production",
+      "priority": "must",
+      "applies_to": [
+        "app",
+        "service"
+      ],
+      "done": false
+    },
+    {
+      "id": "T297",
+      "phase": "deploy",
+      "order": 17,
+      "task": "Log every deploy with who, what, and when",
+      "priority": "should",
+      "applies_to": [
+        "app",
+        "service"
+      ],
+      "done": false
+    },
+    {
+      "id": "T298",
+      "phase": "deploy",
+      "order": 18,
+      "task": "Run a smoke test against production immediately after each deploy",
+      "priority": "should",
+      "applies_to": [
+        "app",
+        "service"
+      ],
+      "done": false
+    },
+    {
+      "id": "T299",
+      "phase": "observability",
+      "order": 1,
+      "task": "Use structured logging with consistent field names",
+      "priority": "must",
+      "applies_to": [
+        "app",
+        "service"
+      ],
+      "done": false
+    },
+    {
+      "id": "T300",
+      "phase": "observability",
+      "order": 2,
+      "task": "Set log levels deliberately and make them configurable",
+      "priority": "should",
+      "applies_to": [
+        "app",
+        "service"
+      ],
+      "done": false
+    },
+    {
+      "id": "T301",
+      "phase": "observability",
+      "order": 3,
+      "task": "Propagate a correlation ID through every layer",
+      "priority": "must",
+      "applies_to": [
+        "app",
+        "service"
+      ],
+      "done": false
+    },
+    {
+      "id": "T302",
+      "phase": "observability",
+      "order": 4,
+      "task": "Emit metrics for anything you would wake someone up about",
+      "priority": "should",
+      "applies_to": [
+        "app",
+        "service"
+      ],
+      "done": false
+    },
+    {
+      "id": "T303",
+      "phase": "observability",
+      "order": 5,
+      "task": "Track latency, traffic, errors, and saturation",
+      "priority": "should",
+      "applies_to": [
+        "app",
+        "service"
+      ],
+      "done": false
+    },
+    {
+      "id": "T304",
+      "phase": "observability",
+      "order": 6,
+      "task": "Add distributed tracing once more than two services are involved",
+      "priority": "optional",
+      "applies_to": [
+        "app",
+        "service"
+      ],
+      "done": false
+    },
+    {
+      "id": "T305",
+      "phase": "observability",
+      "order": 7,
+      "task": "Wire up error reporting with stack traces and request context",
+      "priority": "must",
+      "applies_to": [
+        "app",
+        "service"
+      ],
+      "done": false
+    },
+    {
+      "id": "T306",
+      "phase": "observability",
+      "order": 8,
+      "task": "Alert on symptoms users feel, not on internal noise",
+      "priority": "should",
+      "applies_to": [
+        "app",
+        "service"
+      ],
+      "done": false
+    },
+    {
+      "id": "T307",
+      "phase": "observability",
+      "order": 9,
+      "task": "Define an alert for every failure mode you can name",
+      "priority": "should",
+      "applies_to": [
+        "app",
+        "service"
+      ],
+      "done": false
+    },
+    {
+      "id": "T308",
+      "phase": "observability",
+      "order": 10,
+      "task": "Attach a runbook link to every alert",
+      "priority": "should",
+      "applies_to": [
+        "app",
+        "service"
+      ],
+      "done": false
+    },
+    {
+      "id": "T309",
+      "phase": "observability",
+      "order": 11,
+      "task": "Build one dashboard a person can actually read during an incident",
+      "priority": "should",
+      "applies_to": [
+        "app",
+        "service"
+      ],
+      "done": false
+    },
+    {
+      "id": "T310",
+      "phase": "observability",
+      "order": 12,
+      "task": "Set log retention and a cost ceiling",
+      "priority": "should",
+      "applies_to": [
+        "app",
+        "service"
+      ],
+      "done": false
+    },
+    {
+      "id": "T311",
+      "phase": "observability",
+      "order": 13,
+      "task": "Redact sensitive fields in the logging layer, not by convention",
+      "priority": "must",
+      "applies_to": [
+        "app",
+        "service"
+      ],
+      "done": false
+    },
+    {
+      "id": "T312",
+      "phase": "observability",
+      "order": 14,
+      "task": "Monitor uptime from outside your own infrastructure",
+      "priority": "should",
+      "applies_to": [
+        "app",
+        "service"
+      ],
+      "done": false
+    },
+    {
+      "id": "T313",
+      "phase": "observability",
+      "order": 15,
+      "task": "Mark deploys on dashboards so incidents correlate to changes",
+      "priority": "should",
+      "applies_to": [
+        "app",
+        "service"
+      ],
+      "done": false
+    },
+    {
+      "id": "T314",
+      "phase": "observability",
+      "order": 16,
+      "task": "Define service level objectives before arguing about reliability",
+      "priority": "should",
+      "applies_to": [
+        "app",
+        "service"
+      ],
+      "done": false
+    },
+    {
+      "id": "T315",
+      "phase": "observability",
+      "order": 17,
+      "task": "Review alert noise regularly and delete what nobody acts on",
+      "priority": "should",
+      "applies_to": [
+        "app",
+        "service"
+      ],
+      "done": false
+    },
+    {
+      "id": "T316",
+      "phase": "observability",
+      "order": 18,
+      "task": "Run a failure drill at least once before you need one",
+      "priority": "optional",
+      "applies_to": [
+        "app",
+        "service"
+      ],
+      "done": false
+    },
+    {
+      "id": "T317",
+      "phase": "performance",
+      "order": 1,
+      "task": "Take a baseline measurement before optimizing anything",
+      "priority": "must",
+      "applies_to": [
+        "app",
+        "service",
+        "library"
+      ],
+      "done": false
+    },
+    {
+      "id": "T318",
+      "phase": "performance",
+      "order": 2,
+      "task": "Profile before changing code; do not guess at hotspots",
+      "priority": "must",
+      "applies_to": [
+        "app",
+        "service",
+        "library"
+      ],
+      "done": false
+    },
+    {
+      "id": "T319",
+      "phase": "performance",
+      "order": 3,
+      "task": "Set explicit performance budgets",
+      "priority": "should",
+      "applies_to": [
+        "app",
+        "service",
+        "library"
+      ],
+      "done": false
+    },
+    {
+      "id": "T320",
+      "phase": "performance",
+      "order": 4,
+      "task": "Add benchmarks for the hot paths",
+      "priority": "should",
+      "applies_to": [
+        "app",
+        "service",
+        "library"
+      ],
+      "done": false
+    },
+    {
+      "id": "T321",
+      "phase": "performance",
+      "order": 5,
+      "task": "Run benchmarks in CI and alert on regressions",
+      "priority": "should",
+      "applies_to": [
+        "app",
+        "service",
+        "library"
+      ],
+      "done": false
+    },
+    {
+      "id": "T322",
+      "phase": "performance",
+      "order": 6,
+      "task": "Test with realistic data volumes rather than toy fixtures",
+      "priority": "should",
+      "applies_to": [
+        "app",
+        "service",
+        "library"
+      ],
+      "done": false
+    },
+    {
+      "id": "T323",
+      "phase": "performance",
+      "order": 7,
+      "task": "Find and eliminate N+1 query patterns",
+      "priority": "must",
+      "applies_to": [
+        "app",
+        "service",
+        "library"
+      ],
+      "done": false
+    },
+    {
+      "id": "T324",
+      "phase": "performance",
+      "order": 8,
+      "task": "Add caching only where measurement justifies it",
+      "priority": "should",
+      "applies_to": [
+        "app",
+        "service",
+        "library"
+      ],
+      "done": false
+    },
+    {
+      "id": "T325",
+      "phase": "performance",
+      "order": 9,
+      "task": "Define invalidation rules before adding any cache",
+      "priority": "must",
+      "applies_to": [
+        "app",
+        "service",
+        "library"
+      ],
+      "done": false
+    },
+    {
+      "id": "T326",
+      "phase": "performance",
+      "order": 10,
+      "task": "Set a timeout on every external call",
+      "priority": "must",
+      "applies_to": [
+        "app",
+        "service",
+        "library"
+      ],
+      "done": false
+    },
+    {
+      "id": "T327",
+      "phase": "performance",
+      "order": 11,
+      "task": "Add retries with backoff and a circuit breaker",
+      "priority": "should",
+      "applies_to": [
+        "app",
+        "service",
+        "library"
+      ],
+      "done": false
+    },
+    {
+      "id": "T328",
+      "phase": "performance",
+      "order": 12,
+      "task": "Document the known scaling limits and where they start to hurt",
+      "priority": "should",
+      "applies_to": [
+        "app",
+        "service",
+        "library"
+      ],
+      "done": false
+    },
+    {
+      "id": "T329",
+      "phase": "data",
+      "order": 1,
+      "task": "Design the schema before writing queries against it",
+      "priority": "must",
+      "applies_to": [
+        "service",
+        "app",
+        "data"
+      ],
+      "done": false
+    },
+    {
+      "id": "T330",
+      "phase": "data",
+      "order": 2,
+      "task": "Use migrations for every schema change, including the first",
+      "priority": "must",
+      "applies_to": [
+        "service",
+        "app",
+        "data"
+      ],
+      "done": false
+    },
+    {
+      "id": "T331",
+      "phase": "data",
+      "order": 3,
+      "task": "Make migrations reversible or document why they are not",
+      "priority": "should",
+      "applies_to": [
+        "service",
+        "app",
+        "data"
+      ],
+      "done": false
+    },
+    {
+      "id": "T332",
+      "phase": "data",
+      "order": 4,
+      "task": "Test migrations against a copy of realistic data",
+      "priority": "must",
+      "applies_to": [
+        "service",
+        "app",
+        "data"
+      ],
+      "done": false
+    },
+    {
+      "id": "T333",
+      "phase": "data",
+      "order": 5,
+      "task": "Add indexes based on observed query patterns, not guesses",
+      "priority": "should",
+      "applies_to": [
+        "service",
+        "app",
+        "data"
+      ],
+      "done": false
+    },
+    {
+      "id": "T334",
+      "phase": "data",
+      "order": 6,
+      "task": "Enforce constraints in the database, not only in application code",
+      "priority": "must",
+      "applies_to": [
+        "service",
+        "app",
+        "data"
+      ],
+      "done": false
+    },
+    {
+      "id": "T335",
+      "phase": "data",
+      "order": 7,
+      "task": "Set a backup schedule and test restores on a cadence",
+      "priority": "must",
+      "applies_to": [
+        "service",
+        "app",
+        "data"
+      ],
+      "done": false
+    },
+    {
+      "id": "T336",
+      "phase": "data",
+      "order": 8,
+      "task": "Separate read and write paths only when load justifies it",
+      "priority": "optional",
+      "applies_to": [
+        "service",
+        "app",
+        "data"
+      ],
+      "done": false
+    },
+    {
+      "id": "T337",
+      "phase": "data",
+      "order": 9,
+      "task": "Size connection pools deliberately",
+      "priority": "should",
+      "applies_to": [
+        "service",
+        "app",
+        "data"
+      ],
+      "done": false
+    },
+    {
+      "id": "T338",
+      "phase": "data",
+      "order": 10,
+      "task": "Define a data retention and deletion policy",
+      "priority": "should",
+      "applies_to": [
+        "service",
+        "app",
+        "data"
+      ],
+      "done": false
+    },
+    {
+      "id": "T339",
+      "phase": "data",
+      "order": 11,
+      "task": "Support data export for users who ask for it",
+      "priority": "should",
+      "applies_to": [
+        "service",
+        "app",
+        "data"
+      ],
+      "done": false
+    },
+    {
+      "id": "T340",
+      "phase": "data",
+      "order": 12,
+      "task": "Anonymize production data before using it in development",
+      "priority": "must",
+      "applies_to": [
+        "service",
+        "app",
+        "data"
+      ],
+      "done": false
+    },
+    {
+      "id": "T341",
+      "phase": "data",
+      "order": 13,
+      "task": "Version any data format you persist or transmit",
+      "priority": "should",
+      "applies_to": [
+        "service",
+        "app",
+        "data"
+      ],
+      "done": false
+    },
+    {
+      "id": "T342",
+      "phase": "data",
+      "order": 14,
+      "task": "Document the data model and the invariants it relies on",
+      "priority": "should",
+      "applies_to": [
+        "service",
+        "app",
+        "data"
+      ],
+      "done": false
+    },
+    {
+      "id": "T343",
+      "phase": "api",
+      "order": 1,
+      "task": "Design the interface before implementing it",
+      "priority": "must",
+      "applies_to": [
+        "service",
+        "library"
+      ],
+      "done": false
+    },
+    {
+      "id": "T344",
+      "phase": "api",
+      "order": 2,
+      "task": "Version the API from its first public release",
+      "priority": "must",
+      "applies_to": [
+        "service",
+        "library"
+      ],
+      "done": false
+    },
+    {
+      "id": "T345",
+      "phase": "api",
+      "order": 3,
+      "task": "Publish a machine-readable schema",
+      "priority": "should",
+      "applies_to": [
+        "service",
+        "library"
+      ],
+      "done": false
+    },
+    {
+      "id": "T346",
+      "phase": "api",
+      "order": 4,
+      "task": "Keep naming and pluralization consistent across every endpoint",
+      "priority": "should",
+      "applies_to": [
+        "service",
+        "library"
+      ],
+      "done": false
+    },
+    {
+      "id": "T347",
+      "phase": "api",
+      "order": 5,
+      "task": "Return structured, consistent errors with stable codes",
+      "priority": "must",
+      "applies_to": [
+        "service",
+        "library"
+      ],
+      "done": false
+    },
+    {
+      "id": "T348",
+      "phase": "api",
+      "order": 6,
+      "task": "Use appropriate status codes rather than success-with-error-body",
+      "priority": "should",
+      "applies_to": [
+        "service",
+        "library"
+      ],
+      "done": false
+    },
+    {
+      "id": "T349",
+      "phase": "api",
+      "order": 7,
+      "task": "Paginate every collection endpoint",
+      "priority": "must",
+      "applies_to": [
+        "service",
+        "library"
+      ],
+      "done": false
+    },
+    {
+      "id": "T350",
+      "phase": "api",
+      "order": 8,
+      "task": "Support idempotency keys on unsafe operations",
+      "priority": "should",
+      "applies_to": [
+        "service",
+        "library"
+      ],
+      "done": false
+    },
+    {
+      "id": "T351",
+      "phase": "api",
+      "order": 9,
+      "task": "Rate limit and communicate the limits in response headers",
+      "priority": "should",
+      "applies_to": [
+        "service",
+        "library"
+      ],
+      "done": false
+    },
+    {
+      "id": "T352",
+      "phase": "api",
+      "order": 10,
+      "task": "Document authentication with a working example request",
+      "priority": "should",
+      "applies_to": [
+        "service",
+        "library"
+      ],
+      "done": false
+    },
+    {
+      "id": "T353",
+      "phase": "api",
+      "order": 11,
+      "task": "Provide a deprecation header and timeline before retiring endpoints",
+      "priority": "should",
+      "applies_to": [
+        "service",
+        "library"
+      ],
+      "done": false
+    },
+    {
+      "id": "T354",
+      "phase": "api",
+      "order": 12,
+      "task": "Add contract tests so clients break in CI rather than in production",
+      "priority": "should",
+      "applies_to": [
+        "service",
+        "library"
+      ],
+      "done": false
+    },
+    {
+      "id": "T355",
+      "phase": "frontend",
+      "order": 1,
+      "task": "Choose a rendering strategy deliberately and record the tradeoff",
+      "priority": "must",
+      "applies_to": [
+        "frontend",
+        "app"
+      ],
+      "done": false
+    },
+    {
+      "id": "T356",
+      "phase": "frontend",
+      "order": 2,
+      "task": "Set a bundle size budget and enforce it in CI",
+      "priority": "should",
+      "applies_to": [
+        "frontend",
+        "app"
+      ],
+      "done": false
+    },
+    {
+      "id": "T357",
+      "phase": "frontend",
+      "order": 3,
+      "task": "Establish design tokens before writing component styles",
+      "priority": "must",
+      "applies_to": [
+        "frontend",
+        "app"
+      ],
+      "done": false
+    },
+    {
+      "id": "T358",
+      "phase": "frontend",
+      "order": 4,
+      "task": "Build a component inventory instead of one-off styling",
+      "priority": "should",
+      "applies_to": [
+        "frontend",
+        "app"
+      ],
+      "done": false
+    },
+    {
+      "id": "T359",
+      "phase": "frontend",
+      "order": 5,
+      "task": "Handle loading, empty, and error states for every view",
+      "priority": "must",
+      "applies_to": [
+        "frontend",
+        "app"
+      ],
+      "done": false
+    },
+    {
+      "id": "T360",
+      "phase": "frontend",
+      "order": 6,
+      "task": "Verify every interactive element is reachable by keyboard",
+      "priority": "must",
+      "applies_to": [
+        "frontend",
+        "app"
+      ],
+      "done": false
+    },
+    {
+      "id": "T361",
+      "phase": "frontend",
+      "order": 7,
+      "task": "Check color contrast against WCAG AA",
+      "priority": "must",
+      "applies_to": [
+        "frontend",
+        "app"
+      ],
+      "done": false
+    },
+    {
+      "id": "T362",
+      "phase": "frontend",
+      "order": 8,
+      "task": "Use semantic HTML first and ARIA only where semantics fall short",
+      "priority": "should",
+      "applies_to": [
+        "frontend",
+        "app"
+      ],
+      "done": false
+    },
+    {
+      "id": "T363",
+      "phase": "frontend",
+      "order": 9,
+      "task": "Test the primary flow with a screen reader at least once",
+      "priority": "should",
+      "applies_to": [
+        "frontend",
+        "app"
+      ],
+      "done": false
+    },
+    {
+      "id": "T364",
+      "phase": "frontend",
+      "order": 10,
+      "task": "Verify layouts at mobile, tablet, and desktop widths",
+      "priority": "should",
+      "applies_to": [
+        "frontend",
+        "app"
+      ],
+      "done": false
+    },
+    {
+      "id": "T365",
+      "phase": "frontend",
+      "order": 11,
+      "task": "Externalize user-facing strings if localization is plausible",
+      "priority": "optional",
+      "applies_to": [
+        "frontend",
+        "app"
+      ],
+      "done": false
+    },
+    {
+      "id": "T366",
+      "phase": "frontend",
+      "order": 12,
+      "task": "Test on a throttled connection and a low-end device",
+      "priority": "should",
+      "applies_to": [
+        "frontend",
+        "app"
+      ],
+      "done": false
+    },
+    {
+      "id": "T367",
+      "phase": "community",
+      "order": 1,
+      "task": "Add a code of conduct with a named enforcement contact",
+      "priority": "should",
+      "applies_to": [
+        "oss",
+        "team"
+      ],
+      "done": false
+    },
+    {
+      "id": "T368",
+      "phase": "community",
+      "order": 2,
+      "task": "Add issue templates for bugs, features, and questions",
+      "priority": "should",
+      "applies_to": [
+        "oss",
+        "team"
+      ],
+      "done": false
+    },
+    {
+      "id": "T369",
+      "phase": "community",
+      "order": 3,
+      "task": "Label issues so newcomers can find a way in",
+      "priority": "should",
+      "applies_to": [
+        "oss",
+        "team"
+      ],
+      "done": false
+    },
+    {
+      "id": "T370",
+      "phase": "community",
+      "order": 4,
+      "task": "State expected response times so silence is not a surprise",
+      "priority": "should",
+      "applies_to": [
+        "oss",
+        "team"
+      ],
+      "done": false
+    },
+    {
+      "id": "T371",
+      "phase": "community",
+      "order": 5,
+      "task": "Document the review criteria you actually apply",
+      "priority": "should",
+      "applies_to": [
+        "oss",
+        "team"
+      ],
+      "done": false
+    },
+    {
+      "id": "T372",
+      "phase": "community",
+      "order": 6,
+      "task": "Decline out-of-scope contributions clearly and early",
+      "priority": "must",
+      "applies_to": [
+        "oss",
+        "team"
+      ],
+      "done": false
+    },
+    {
+      "id": "T373",
+      "phase": "community",
+      "order": 7,
+      "task": "Credit contributors visibly",
+      "priority": "should",
+      "applies_to": [
+        "oss",
+        "team"
+      ],
+      "done": false
+    },
+    {
+      "id": "T374",
+      "phase": "community",
+      "order": 8,
+      "task": "Name the support channel and say where support does not happen",
+      "priority": "should",
+      "applies_to": [
+        "oss",
+        "team"
+      ],
+      "done": false
+    },
+    {
+      "id": "T375",
+      "phase": "community",
+      "order": 9,
+      "task": "Publish a roadmap or state plainly that there is not one",
+      "priority": "should",
+      "applies_to": [
+        "oss",
+        "team"
+      ],
+      "done": false
+    },
+    {
+      "id": "T376",
+      "phase": "community",
+      "order": 10,
+      "task": "Open a discussion space once issues get noisy",
+      "priority": "optional",
+      "applies_to": [
+        "oss",
+        "team"
+      ],
+      "done": false
+    },
+    {
+      "id": "T377",
+      "phase": "community",
+      "order": 11,
+      "task": "Document the governance model once there is more than one maintainer",
+      "priority": "should",
+      "applies_to": [
+        "oss",
+        "team"
+      ],
+      "done": false
+    },
+    {
+      "id": "T378",
+      "phase": "community",
+      "order": 12,
+      "task": "Give a second person publish rights so the bus factor is not one",
+      "priority": "must",
+      "applies_to": [
+        "oss",
+        "team"
+      ],
+      "done": false
+    },
+    {
+      "id": "T379",
+      "phase": "community",
+      "order": 13,
+      "task": "Write an onboarding doc for new maintainers",
+      "priority": "should",
+      "applies_to": [
+        "oss",
+        "team"
+      ],
+      "done": false
+    },
+    {
+      "id": "T380",
+      "phase": "community",
+      "order": 14,
+      "task": "Set a stale issue policy and apply it consistently",
+      "priority": "should",
+      "applies_to": [
+        "oss",
+        "team"
+      ],
+      "done": false
+    },
+    {
+      "id": "T381",
+      "phase": "maintenance",
+      "order": 1,
+      "task": "Schedule a recurring dependency update window",
+      "priority": "must",
+      "applies_to": [
+        "all"
+      ],
+      "done": false
+    },
+    {
+      "id": "T382",
+      "phase": "maintenance",
+      "order": 2,
+      "task": "Triage open issues on a fixed cadence",
+      "priority": "should",
+      "applies_to": [
+        "all"
+      ],
+      "done": false
+    },
+    {
+      "id": "T383",
+      "phase": "maintenance",
+      "order": 3,
+      "task": "Close issues nobody will ever work on, with a stated reason",
+      "priority": "should",
+      "applies_to": [
+        "all"
+      ],
+      "done": false
+    },
+    {
+      "id": "T384",
+      "phase": "maintenance",
+      "order": 4,
+      "task": "Track technical debt as issues rather than as tribal memory",
+      "priority": "must",
+      "applies_to": [
+        "all"
+      ],
+      "done": false
+    },
+    {
+      "id": "T385",
+      "phase": "maintenance",
+      "order": 5,
+      "task": "Delete dead code instead of commenting it out",
+      "priority": "must",
+      "applies_to": [
+        "all"
+      ],
+      "done": false
+    },
+    {
+      "id": "T386",
+      "phase": "maintenance",
+      "order": 6,
+      "task": "Remove feature flags once rollout is complete",
+      "priority": "should",
+      "applies_to": [
+        "all"
+      ],
+      "done": false
+    },
+    {
+      "id": "T387",
+      "phase": "maintenance",
+      "order": 7,
+      "task": "Re-run your own quickstart every few months",
+      "priority": "should",
+      "applies_to": [
+        "all"
+      ],
+      "done": false
+    },
+    {
+      "id": "T388",
+      "phase": "maintenance",
+      "order": 8,
+      "task": "Verify the pipeline still passes on a clean fork",
+      "priority": "should",
+      "applies_to": [
+        "all"
+      ],
+      "done": false
+    },
+    {
+      "id": "T389",
+      "phase": "maintenance",
+      "order": 9,
+      "task": "Audit access, tokens, and permissions periodically",
+      "priority": "should",
+      "applies_to": [
+        "all"
+      ],
+      "done": false
+    },
+    {
+      "id": "T390",
+      "phase": "maintenance",
+      "order": 10,
+      "task": "Update supported runtime versions as upstream drops them",
+      "priority": "should",
+      "applies_to": [
+        "all"
+      ],
+      "done": false
+    },
+    {
+      "id": "T391",
+      "phase": "maintenance",
+      "order": 11,
+      "task": "Prune lint rules and tests that no longer earn their runtime",
+      "priority": "should",
+      "applies_to": [
+        "all"
+      ],
+      "done": false
+    },
+    {
+      "id": "T392",
+      "phase": "maintenance",
+      "order": 12,
+      "task": "Watch for abandoned dependencies and plan replacements early",
+      "priority": "must",
+      "applies_to": [
+        "all"
+      ],
+      "done": false
+    },
+    {
+      "id": "T393",
+      "phase": "maintenance",
+      "order": 13,
+      "task": "Track issue response latency as a project health metric",
+      "priority": "should",
+      "applies_to": [
+        "all"
+      ],
+      "done": false
+    },
+    {
+      "id": "T394",
+      "phase": "maintenance",
+      "order": 14,
+      "task": "Write a postmortem after every significant incident",
+      "priority": "must",
+      "applies_to": [
+        "all"
+      ],
+      "done": false
+    },
+    {
+      "id": "T395",
+      "phase": "maintenance",
+      "order": 15,
+      "task": "Convert every postmortem action item into a tracked task",
+      "priority": "should",
+      "applies_to": [
+        "all"
+      ],
+      "done": false
+    },
+    {
+      "id": "T396",
+      "phase": "maintenance",
+      "order": 16,
+      "task": "Reassess annually whether the project should still exist",
+      "priority": "should",
+      "applies_to": [
+        "all"
+      ],
+      "done": false
+    },
+    {
+      "id": "T397",
+      "phase": "maintenance",
+      "order": 17,
+      "task": "Document an archival procedure and use it when the time comes",
+      "priority": "should",
+      "applies_to": [
+        "all"
+      ],
+      "done": false
+    },
+    {
+      "id": "T398",
+      "phase": "maintenance",
+      "order": 18,
+      "task": "Transfer ownership deliberately rather than going quiet",
+      "priority": "should",
+      "applies_to": [
+        "all"
+      ],
+      "done": false
+    },
+    {
+      "id": "T399",
+      "phase": "maintenance",
+      "order": 19,
+      "task": "Keep a decision log so future you knows why",
+      "priority": "must",
+      "applies_to": [
+        "all"
+      ],
+      "done": false
+    },
+    {
+      "id": "T400",
+      "phase": "maintenance",
+      "order": 20,
+      "task": "Back up the repository and its metadata outside the hosting provider",
+      "priority": "should",
+      "applies_to": [
+        "all"
+      ],
+      "done": false
+    }
+  ]
+}
