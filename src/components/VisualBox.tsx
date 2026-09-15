@@ -1,6 +1,6 @@
 import React from 'react';
 import { CalculationResult, BoxFillInputs } from '../types/nec';
-import { STANDARD_BOXES } from '../data/necTables';
+import { CABLE_TYPES, STANDARD_BOXES } from '../data/necTables';
 import { AlertCircle, CheckCircle2, AlertTriangle } from 'lucide-react';
 
 interface VisualBoxProps {
@@ -124,6 +124,17 @@ export const VisualBox: React.FC<VisualBoxProps> = ({ result, inputs, unit }) =>
           
           {/* Conductors Representation */}
           <div className="flex flex-wrap items-center gap-1.5">
+            {(inputs.cables || []).map((cable, i) => {
+              const type = CABLE_TYPES.find(t => t.id === cable.cableTypeId);
+              if (!type) return null;
+              return (
+                <div key={`cable-${i}`} className="flex items-center gap-1 bg-indigo-950/40 border border-indigo-800/50 px-2 py-1 rounded-lg text-xs">
+                  <span className={`w-2 h-2 rounded-full ${type.size === '14' ? 'bg-white' : type.size === '12' ? 'bg-yellow-400' : 'bg-red-500'}`} />
+                  <span className="text-indigo-200 font-mono">{cable.quantity}x {type.shortLabel}</span>
+                </div>
+              );
+            })}
+
             {inputs.conductors.map((c, i) => (
               <div key={i} className="flex items-center gap-1 bg-zinc-900 border border-zinc-700 px-2 py-1 rounded-lg text-xs">
                 <span className={`w-2 h-2 rounded-full ${c.size === '14' ? 'bg-white' : c.size === '12' ? 'bg-yellow-400' : 'bg-red-500'}`} />
@@ -133,10 +144,10 @@ export const VisualBox: React.FC<VisualBoxProps> = ({ result, inputs, unit }) =>
             ))}
 
             {/* Grounding Conductor Visual */}
-            {inputs.egcCount > 0 && (
+            {result.totalEgcCount > 0 && (
               <div className="flex items-center gap-1 bg-emerald-950/60 border border-emerald-700/50 px-2 py-1 rounded-lg text-xs text-emerald-300">
                 <span className="w-2 h-2 rounded-full bg-emerald-400" />
-                <span className="font-mono">{inputs.egcCount}x Ground ({inputs.largestEgcSize} AWG)</span>
+                <span className="font-mono">{result.totalEgcCount}x Ground ({inputs.largestEgcSize} AWG)</span>
               </div>
             )}
           </div>

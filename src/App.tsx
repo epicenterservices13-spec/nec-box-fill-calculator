@@ -1,9 +1,12 @@
 import React, { useState, useEffect, useMemo } from 'react';
-import { BoxFillInputs, WiringPreset } from './types/nec';
+import { BoxFillInputs, BoxSuggestion, SavedJob, WiringPreset } from './types/nec';
 import { calculateBoxFill } from './utils/calculator';
+import { readInputsFromHash, clearHash } from './utils/shareLink';
+import { loadSavedJobs, persistSavedJobs, createSavedJob } from './utils/savedJobs';
 import { Header } from './components/Header';
 import { VisualBox } from './components/VisualBox';
 import { BoxSelector } from './components/BoxSelector';
+import { CableForm } from './components/CableForm';
 import { ConductorForm } from './components/ConductorForm';
 import { DeviceForm } from './components/DeviceForm';
 import { HardwareForm } from './components/HardwareForm';
@@ -11,7 +14,8 @@ import { ResultsBreakdown } from './components/ResultsBreakdown';
 import { PresetsModal } from './components/PresetsModal';
 import { CodeReferenceModal } from './components/CodeReferenceModal';
 import { InspectionReportModal } from './components/InspectionReportModal';
-import { Calculator } from 'lucide-react';
+import { SavedJobsModal } from './components/SavedJobsModal';
+import { Calculator, Link2, X } from 'lucide-react';
 
 const STORAGE_KEY = 'nec_box_fill_inputs_v2';
 
@@ -27,14 +31,15 @@ const DEFAULT_INPUTS: BoxFillInputs = {
   },
   extensionRingId: 'mud_1_2', // 1/2" Single-Gang Mud Ring (+3.5 cu in)
   customExtensionVolume: 0,
-  conductors: [
-    { id: '1', size: '12', count: 4, isPigtail: false, description: '12/2 Line & Load Hot/Neutral' }
+  cables: [
+    { id: 'cable1', cableTypeId: 'nm_12_2', quantity: 2, description: 'Line in & load out' }
   ],
+  conductors: [],
   hasInternalClamps: true,
   clampWireSize: '12',
   hasSupportFittings: false,
   supportFittingWireSize: '12',
-  egcCount: 2,
+  egcCount: 0,
   largestEgcSize: '12',
   hasIsolatedGrounds: false,
   devices: [
@@ -42,21 +47,49 @@ const DEFAULT_INPUTS: BoxFillInputs = {
   ]
 };
 
+// Read once at module load: the state initializer clears the hash, so anything
+// that needs to know a link was opened has to capture it before that happens.
+const SHARED_INPUTS = readInputsFromHash();
+
+// Saved state predates the cables field, and shared links carry whatever the sender
+// had — fill the gaps from the defaults without inventing conductors nobody entered.
+function normalizeInputs(raw: Partial<BoxFillInputs> | null | undefined): BoxFillInputs {
+  if (!raw || typeof raw !== 'object') return DEFAULT_INPUTS;
+  return {
+    ...DEFAULT_INPUTS,
+    ...raw,
+    cables: Array.isArray(raw.cables) ? raw.cables : [],
+    conductors: Array.isArray(raw.conductors) ? raw.conductors : [],
+    devices: Array.isArray(raw.devices) ? raw.devices : [],
+    customDimensions: { ...DEFAULT_INPUTS.customDimensions, ...(raw.customDimensions || {}) }
+  };
+}
+
 export default function App() {
   const [unit, setUnit] = useState<'imperial' | 'metric'>('imperial');
+  const [loadedFromLink, setLoadedFromLink] = useState(SHARED_INPUTS !== null);
+
   const [inputs, setInputs] = useState<BoxFillInputs>(() => {
+    // A shared link wins over whatever is in this browser's storage
+    if (SHARED_INPUTS) {
+      clearHash();
+      return normalizeInputs(SHARED_INPUTS);
+    }
     try {
       const saved = localStorage.getItem(STORAGE_KEY);
-      return saved ? JSON.parse(saved) : DEFAULT_INPUTS;
+      return saved ? normalizeInputs(JSON.parse(saved)) : DEFAULT_INPUTS;
     } catch {
       return DEFAULT_INPUTS;
     }
   });
 
+  const [savedJobs, setSavedJobs] = useState<SavedJob[]>(() => loadSavedJobs());
+
   // Modal States
   const [isPresetsOpen, setIsPresetsOpen] = useState(false);
   const [isCodeRefOpen, setIsCodeRefOpen] = useState(false);
   const [isReportOpen, setIsReportOpen] = useState(false);
+  const [isJobsOpen, setIsJobsOpen] = useState(false);
 
   // Auto save to localStorage
   useEffect(() => {
@@ -66,6 +99,10 @@ export default function App() {
       console.error('Failed to save to localStorage:', e);
     }
   }, [inputs]);
+
+  useEffect(() => {
+    persistSavedJobs(savedJobs);
+  }, [savedJobs]);
 
   // Reactive Calculation
   const result = useMemo(() => calculateBoxFill(inputs), [inputs]);
@@ -78,9 +115,32 @@ export default function App() {
     setInputs(prev => ({
       ...prev,
       ...preset.inputs,
+      cables: preset.inputs.cables || [],
       conductors: preset.inputs.conductors || prev.conductors,
       devices: preset.inputs.devices || prev.devices
     }));
+  };
+
+  // One click from "this box fails" to a box that passes
+  const handleApplySuggestion = (suggestion: BoxSuggestion) => {
+    updateInputs({
+      boxType: 'standard',
+      selectedStandardBoxId: suggestion.boxId,
+      extensionRingId: suggestion.extensionRingId,
+      customExtensionVolume: 0
+    });
+  };
+
+  const handleSaveJob = (label: string) => {
+    setSavedJobs(prev => [...prev, createSavedJob(label, inputs)]);
+  };
+
+  const handleLoadJob = (job: SavedJob) => {
+    setInputs(normalizeInputs(job.inputs));
+  };
+
+  const handleDeleteJob = (id: string) => {
+    setSavedJobs(prev => prev.filter(j => j.id !== id));
   };
 
   const handleReset = () => {
@@ -97,8 +157,28 @@ export default function App() {
         onOpenPresets={() => setIsPresetsOpen(true)}
         onOpenCodeRef={() => setIsCodeRefOpen(true)}
         onOpenReport={() => setIsReportOpen(true)}
+        onOpenJobs={() => setIsJobsOpen(true)}
+        savedJobCount={savedJobs.length}
         onReset={handleReset}
       />
+
+      {/* Shared Link Notice */}
+      {loadedFromLink && (
+        <div className="bg-indigo-950/40 border-b border-indigo-500/30 text-indigo-200 text-xs">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-2.5 flex items-center justify-between gap-3">
+            <span className="flex items-center gap-2">
+              <Link2 className="w-3.5 h-3.5 text-indigo-400" />
+              Loaded a shared calculation from the link. Save it under <strong>Saved Boxes</strong> to keep it.
+            </span>
+            <button
+              onClick={() => setLoadedFromLink(false)}
+              className="p-1 text-indigo-300 hover:text-white hover:bg-indigo-500/20 rounded-lg transition-all"
+            >
+              <X className="w-4 h-4" />
+            </button>
+          </div>
+        </div>
+      )}
 
       {/* Main Container */}
       <main className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
@@ -143,6 +223,13 @@ export default function App() {
               unit={unit}
             />
 
+            {/* Cables (expand into conductors + grounds) */}
+            <CableForm
+              cables={inputs.cables}
+              onChange={(cables) => updateInputs({ cables })}
+              unit={unit}
+            />
+
             {/* Insulated Conductors */}
             <ConductorForm
               conductors={inputs.conductors}
@@ -162,6 +249,8 @@ export default function App() {
               inputs={inputs}
               onChange={updateInputs}
               largestConductorInBox={result.largestConductorInBox}
+              egcCountFromCables={result.egcCountFromCables}
+              totalEgcCount={result.totalEgcCount}
               unit={unit}
             />
 
@@ -181,6 +270,7 @@ export default function App() {
             <ResultsBreakdown
               result={result}
               unit={unit}
+              onApplySuggestion={handleApplySuggestion}
             />
 
           </div>
@@ -217,7 +307,18 @@ export default function App() {
         onClose={() => setIsReportOpen(false)}
         inputs={inputs}
         result={result}
+        savedJobs={savedJobs}
         unit={unit}
+      />
+
+      <SavedJobsModal
+        isOpen={isJobsOpen}
+        onClose={() => setIsJobsOpen(false)}
+        jobs={savedJobs}
+        currentInputs={inputs}
+        onSaveCurrent={handleSaveJob}
+        onLoad={handleLoadJob}
+        onDelete={handleDeleteJob}
       />
 
     </div>

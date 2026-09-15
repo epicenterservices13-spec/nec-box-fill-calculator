@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
-import { BoxFillInputs, CalculationResult } from '../types/nec';
+import { BoxFillInputs, CalculationResult, SavedJob } from '../types/nec';
 import { STANDARD_BOXES } from '../data/necTables';
+import { calculateBoxFill } from '../utils/calculator';
 import { X, Printer, Copy, CheckCircle2, AlertOctagon, FileText } from 'lucide-react';
 
 interface InspectionReportModalProps {
@@ -8,6 +9,7 @@ interface InspectionReportModalProps {
   onClose: () => void;
   inputs: BoxFillInputs;
   result: CalculationResult;
+  savedJobs: SavedJob[];
   unit: 'imperial' | 'metric';
 }
 
@@ -16,14 +18,21 @@ export const InspectionReportModal: React.FC<InspectionReportModalProps> = ({
   onClose,
   inputs,
   result,
+  savedJobs,
   unit
 }) => {
   const [jobTitle, setJobTitle] = useState('Commercial / Residential Branch Circuit');
   const [location, setLocation] = useState('Jobsite Box #101');
   const [electricianName, setElectricianName] = useState('Master Electrician');
   const [copied, setCopied] = useState(false);
+  const [includeSavedBoxes, setIncludeSavedBoxes] = useState(true);
 
   if (!isOpen) return null;
+
+  // Every saved box on the job, priced out with the same pure calculation
+  const roster = savedJobs.map(job => ({ job, jobResult: calculateBoxFill(job.inputs) }));
+  const showRoster = includeSavedBoxes && roster.length > 0;
+  const rosterFailures = roster.filter(r => !r.jobResult.isCompliant).length;
 
   const selectedBox = STANDARD_BOXES.find(b => b.id === inputs.selectedStandardBoxId);
   const boxName = inputs.boxType === 'standard' 
@@ -55,7 +64,10 @@ ENCLOSURE SPECIFICATIONS:
 ITEMIZED ALLOWANCE BREAKDOWN:
 ${result.breakdown.map(item => `- [${item.necRef}] ${item.label}: ${item.allowanceCount}x allowance @ ${item.wireSizeUsed} AWG = ${item.totalVolumeCuIn.toFixed(2)} cu in`).join('\n')}
 
-INSPECTOR VERDICT:
+${showRoster ? `PROJECT BOX ROSTER (${roster.length} saved boxes, ${rosterFailures} non-compliant):
+${roster.map(({ job, jobResult }) => `- ${job.label}: ${jobResult.totalRequiredVolumeCuIn.toFixed(2)} / ${jobResult.totalAvailableVolumeCuIn.toFixed(2)} cu in (${jobResult.fillPercentage}%) — ${jobResult.isCompliant ? 'PASS' : 'FAIL'}`).join('\n')}
+
+` : ''}INSPECTOR VERDICT:
 ${result.isCompliant 
   ? `✓ COMPLIANT: Enclosure provides sufficient volume capacity under NEC 314.16 requirements.`
   : `⚠️ NON-COMPLIANT: Enclosure exceeds maximum allowable volume by ${Math.abs(result.excessVolumeCuIn).toFixed(2)} cu in.`}
@@ -143,6 +155,24 @@ ${result.isCompliant
           </div>
         </div>
 
+        {/* Multi-Box Roster Toggle */}
+        {roster.length > 0 && (
+          <label className="bg-zinc-900/60 px-4 py-2.5 border-b border-zinc-800 flex items-center gap-2 text-xs text-zinc-300 cursor-pointer print:hidden">
+            <input
+              type="checkbox"
+              checked={includeSavedBoxes}
+              onChange={(e) => setIncludeSavedBoxes(e.target.checked)}
+              className="w-4 h-4 rounded accent-indigo-500 cursor-pointer"
+            />
+            <span>
+              Include all <strong className="text-white">{roster.length}</strong> saved boxes as a project roster
+              {rosterFailures > 0 && (
+                <span className="text-rose-400 font-semibold"> — {rosterFailures} non-compliant</span>
+              )}
+            </span>
+          </label>
+        )}
+
         {/* Printable Report Document Body */}
         <div className="p-6 overflow-y-auto space-y-6 print:p-0 print:text-black">
           <div className="border border-zinc-800 rounded-2xl p-6 bg-zinc-950 space-y-6">
@@ -222,6 +252,46 @@ ${result.isCompliant
                 </tbody>
               </table>
             </div>
+
+            {/* Project Box Roster */}
+            {showRoster && (
+              <div className="space-y-2">
+                <h4 className="text-xs font-bold text-zinc-300 uppercase tracking-wider">
+                  Project Box Roster ({roster.length} Saved Boxes)
+                </h4>
+                <table className="w-full text-left text-xs border border-zinc-800 rounded-xl overflow-hidden">
+                  <thead className="bg-zinc-900 text-zinc-400 font-mono">
+                    <tr>
+                      <th className="p-2.5">Box</th>
+                      <th className="p-2.5">Enclosure</th>
+                      <th className="p-2.5 text-right">Required</th>
+                      <th className="p-2.5 text-right">Available</th>
+                      <th className="p-2.5 text-center">Fill</th>
+                      <th className="p-2.5 text-center">Status</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-zinc-800 text-zinc-200">
+                    {roster.map(({ job, jobResult }) => {
+                      const jobBox = job.inputs.boxType === 'standard'
+                        ? (STANDARD_BOXES.find(b => b.id === job.inputs.selectedStandardBoxId)?.name || 'Standard Box')
+                        : 'Custom Box';
+                      return (
+                        <tr key={job.id}>
+                          <td className="p-2.5 font-medium">{job.label}</td>
+                          <td className="p-2.5 text-zinc-400">{jobBox}</td>
+                          <td className="p-2.5 text-right font-mono">{jobResult.totalRequiredVolumeCuIn.toFixed(2)} cu in</td>
+                          <td className="p-2.5 text-right font-mono">{jobResult.totalAvailableVolumeCuIn.toFixed(2)} cu in</td>
+                          <td className="p-2.5 text-center font-mono">{jobResult.fillPercentage}%</td>
+                          <td className={`p-2.5 text-center font-bold ${jobResult.isCompliant ? 'text-emerald-400' : 'text-rose-400'}`}>
+                            {jobResult.isCompliant ? 'PASS' : 'FAIL'}
+                          </td>
+                        </tr>
+                      );
+                    })}
+                  </tbody>
+                </table>
+              </div>
+            )}
 
             {/* Official Signature line */}
             <div className="pt-8 border-t border-zinc-800 flex justify-between items-end text-xs text-zinc-500">

@@ -1,4 +1,4 @@
-import { WireSize, StandardBox, ExtensionRing, WiringPreset } from '../types/nec';
+import { WireSize, StandardBox, ExtensionRing, WiringPreset, CableType } from '../types/nec';
 
 // NEC Table 314.16(B) Volume Allowance Required per Conductor
 export const NEC_CONDUCTOR_VOLUMES: Record<WireSize, { cuIn: number; cm3: number }> = {
@@ -28,6 +28,159 @@ export function getLargerWireSize(sizeA: WireSize, sizeB: WireSize): WireSize {
   const indexA = WIRE_SIZE_ORDER.indexOf(sizeA);
   const indexB = WIRE_SIZE_ORDER.indexOf(sizeB);
   return indexA >= indexB ? sizeA : sizeB;
+}
+
+// Common jacketed cables. Each expands into its insulated conductors plus the
+// equipment grounding conductor that rides along with it, so the ground is never
+// forgotten. Only sizes whose EGC matches the circuit conductors are listed —
+// larger NM-B assemblies use a reduced ground and should be entered as loose
+// conductors instead.
+export const CABLE_TYPES: CableType[] = [
+  {
+    id: 'nm_14_2',
+    name: '14/2 NM-B w/ ground',
+    shortLabel: '14/2 NM-B',
+    category: 'nm',
+    size: '14',
+    insulatedCount: 2,
+    hasEgc: true,
+    egcSize: '14',
+    clampsTypical: true
+  },
+  {
+    id: 'nm_14_3',
+    name: '14/3 NM-B w/ ground',
+    shortLabel: '14/3 NM-B',
+    category: 'nm',
+    size: '14',
+    insulatedCount: 3,
+    hasEgc: true,
+    egcSize: '14',
+    clampsTypical: true
+  },
+  {
+    id: 'nm_12_2',
+    name: '12/2 NM-B w/ ground',
+    shortLabel: '12/2 NM-B',
+    category: 'nm',
+    size: '12',
+    insulatedCount: 2,
+    hasEgc: true,
+    egcSize: '12',
+    clampsTypical: true
+  },
+  {
+    id: 'nm_12_3',
+    name: '12/3 NM-B w/ ground',
+    shortLabel: '12/3 NM-B',
+    category: 'nm',
+    size: '12',
+    insulatedCount: 3,
+    hasEgc: true,
+    egcSize: '12',
+    clampsTypical: true
+  },
+  {
+    id: 'nm_10_2',
+    name: '10/2 NM-B w/ ground',
+    shortLabel: '10/2 NM-B',
+    category: 'nm',
+    size: '10',
+    insulatedCount: 2,
+    hasEgc: true,
+    egcSize: '10',
+    clampsTypical: true
+  },
+  {
+    id: 'nm_10_3',
+    name: '10/3 NM-B w/ ground',
+    shortLabel: '10/3 NM-B',
+    category: 'nm',
+    size: '10',
+    insulatedCount: 3,
+    hasEgc: true,
+    egcSize: '10',
+    clampsTypical: true
+  },
+  {
+    id: 'uf_12_2',
+    name: '12/2 UF-B w/ ground',
+    shortLabel: '12/2 UF-B',
+    category: 'uf',
+    size: '12',
+    insulatedCount: 2,
+    hasEgc: true,
+    egcSize: '12',
+    clampsTypical: true
+  },
+  {
+    id: 'mc_14_2',
+    name: '14/2 MC Cable',
+    shortLabel: '14/2 MC',
+    category: 'mc',
+    size: '14',
+    insulatedCount: 2,
+    hasEgc: true,
+    egcSize: '14',
+    clampsTypical: false,
+    note: 'MC connectors mount outside the box wall — no internal clamp allowance unless clamps sit inside.'
+  },
+  {
+    id: 'mc_12_2',
+    name: '12/2 MC Cable',
+    shortLabel: '12/2 MC',
+    category: 'mc',
+    size: '12',
+    insulatedCount: 2,
+    hasEgc: true,
+    egcSize: '12',
+    clampsTypical: false,
+    note: 'MC connectors mount outside the box wall — no internal clamp allowance unless clamps sit inside.'
+  },
+  {
+    id: 'mc_12_3',
+    name: '12/3 MC Cable',
+    shortLabel: '12/3 MC',
+    category: 'mc',
+    size: '12',
+    insulatedCount: 3,
+    hasEgc: true,
+    egcSize: '12',
+    clampsTypical: false,
+    note: 'MC connectors mount outside the box wall — no internal clamp allowance unless clamps sit inside.'
+  },
+  {
+    id: 'ac_14_2',
+    name: '14/2 AC (BX) Cable',
+    shortLabel: '14/2 AC',
+    category: 'ac',
+    size: '14',
+    insulatedCount: 2,
+    hasEgc: false,
+    egcSize: '14',
+    clampsTypical: true,
+    note: 'Armor is the equipment grounding path; the bonding strip gets no volume allowance.'
+  },
+  {
+    id: 'ac_12_2',
+    name: '12/2 AC (BX) Cable',
+    shortLabel: '12/2 AC',
+    category: 'ac',
+    size: '12',
+    insulatedCount: 2,
+    hasEgc: false,
+    egcSize: '12',
+    clampsTypical: true,
+    note: 'Armor is the equipment grounding path; the bonding strip gets no volume allowance.'
+  }
+];
+
+// Mud rings and extension rings physically land on 4" and 4-11/16" square boxes.
+// Device boxes, octagons and molded gang boxes take none, so the box recommender
+// never proposes hardware that will not bolt together.
+export function isRingCompatible(box: StandardBox, ringId: string): boolean {
+  if (ringId === 'none') return true;
+  return box.category === 'square_4in' || box.category === 'square_4_11_16in';
 }
 
 // NEC Table 314.16(A) Metal Boxes Standard Volumes
