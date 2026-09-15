@@ -1,0 +1,6 @@
+{
+  "name": "NEC Box Fill Calculator",
+  "description": "Calculate enclosure conductor volume requirements, ground wire allowances, internal clamps, and strap devices under National Electrical Code Article 314.16.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

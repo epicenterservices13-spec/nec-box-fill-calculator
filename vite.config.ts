@@ -4,7 +4,12 @@ import tailwindcss from '@tailwindcss/vite'
 
 export default defineConfig({
   plugins: [react(), tailwindcss()],
-  base: '/nec-box-fill-calculator/',
+  base: '/',
+  server: {
+    host: '0.0.0.0',
+    port: 3000,
+    allowedHosts: true,
+  },
   build: {
     outDir: 'dist',
   },
