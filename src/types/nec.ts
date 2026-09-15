@@ -9,6 +9,26 @@ export interface ConductorEntry {
   description?: string;
 }
 
+export interface CableType {
+  id: string;
+  name: string;
+  shortLabel: string;
+  category: 'nm' | 'mc' | 'ac' | 'uf';
+  size: WireSize;
+  insulatedCount: number; // Current-carrying + neutral conductors inside the jacket
+  hasEgc: boolean;
+  egcSize: WireSize;
+  clampsTypical: boolean; // Cable normally landed with an internal clamp in a metal box
+  note?: string;
+}
+
+export interface CableEntry {
+  id: string;
+  cableTypeId: string;
+  quantity: number; // Number of this cable entering the box
+  description?: string;
+}
+
 export type DeviceType = 'receptacle' | 'switch' | 'gfci' | 'dimmer' | 'smart_switch' | 'double_gang_device' | 'triple_gang_device';
 
 export interface DeviceEntry {
@@ -58,6 +78,9 @@ export interface BoxFillInputs {
   extensionRingId: string;
   customExtensionVolume: number;
 
+  // Cables (expanded into conductors + EGCs before the NEC math runs)
+  cables: CableEntry[];
+
   // Conductors
   conductors: ConductorEntry[];
 
@@ -88,6 +111,17 @@ export interface VolumeBreakdownItem {
   details: string;
 }
 
+export interface BoxSuggestion {
+  boxId: string;
+  boxName: string;
+  extensionRingId: string;
+  extensionRingName: string;
+  totalVolumeCuIn: number;
+  fillPercentage: number;
+  headroomCuIn: number;
+  reason: 'overfilled' | 'tight';
+}
+
 export interface CalculationResult {
   totalRequiredVolumeCuIn: number;
   totalRequiredVolumeCm3: number;
@@ -101,6 +135,9 @@ export interface CalculationResult {
   excessVolumeCuIn: number; // Positive = headroom, Negative = overflow
   breakdown: VolumeBreakdownItem[];
   largestConductorInBox: WireSize;
+  egcCountFromCables: number;
+  totalEgcCount: number;
+  suggestions: BoxSuggestion[];
   warnings: string[];
   recommendations: string[];
 }
@@ -111,4 +148,11 @@ export interface WiringPreset {
   description: string;
   category: 'Residential' | 'Commercial' | 'Specialty';
   inputs: Partial<BoxFillInputs>;
+}
+
+export interface SavedJob {
+  id: string;
+  label: string;
+  savedAt: string; // ISO timestamp
+  inputs: BoxFillInputs;
 }

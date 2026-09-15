@@ -1,5 +1,5 @@
 import React from 'react';
-import { Zap, BookOpen, FileCheck2, Bookmark, RefreshCw } from 'lucide-react';
+import { Zap, BookOpen, FileCheck2, Bookmark, RefreshCw, FolderOpen } from 'lucide-react';
 
 interface HeaderProps {
   unit: 'imperial' | 'metric';
@@ -7,6 +7,8 @@ interface HeaderProps {
   onOpenPresets: () => void;
   onOpenCodeRef: () => void;
   onOpenReport: () => void;
+  onOpenJobs: () => void;
+  savedJobCount: number;
   onReset: () => void;
 }
 
@@ -16,6 +18,8 @@ export const Header: React.FC<HeaderProps> = ({
   onOpenPresets,
   onOpenCodeRef,
   onOpenReport,
+  onOpenJobs,
+  savedJobCount,
   onReset
 }) => {
   return (
@@ -72,6 +76,20 @@ export const Header: React.FC<HeaderProps> = ({
           >
             <Bookmark className="w-3.5 h-3.5 text-indigo-400" />
             <span>Presets</span>
+          </button>
+
+          {/* Saved Boxes */}
+          <button
+            onClick={onOpenJobs}
+            className="flex items-center gap-1.5 bg-zinc-900 hover:bg-zinc-800 text-zinc-200 border border-zinc-800 text-xs font-medium px-3 py-2 rounded-xl transition-all"
+          >
+            <FolderOpen className="w-3.5 h-3.5 text-emerald-400" />
+            <span>Saved Boxes</span>
+            {savedJobCount > 0 && (
+              <span className="bg-zinc-800 text-zinc-300 text-[10px] px-1.5 py-0.5 rounded-full font-mono">
+                {savedJobCount}
+              </span>
+            )}
           </button>
 
           {/* Code Reference */}

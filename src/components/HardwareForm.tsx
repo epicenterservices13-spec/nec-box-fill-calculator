@@ -7,6 +7,8 @@ interface HardwareFormProps {
   inputs: BoxFillInputs;
   onChange: (updated: Partial<BoxFillInputs>) => void;
   largestConductorInBox: WireSize;
+  egcCountFromCables: number;
+  totalEgcCount: number;
   unit: 'imperial' | 'metric';
 }
 
@@ -14,6 +16,8 @@ export const HardwareForm: React.FC<HardwareFormProps> = ({
   inputs,
   onChange,
   largestConductorInBox,
+  egcCountFromCables,
+  totalEgcCount,
   unit
 }) => {
   return (
@@ -48,7 +52,14 @@ export const HardwareForm: React.FC<HardwareFormProps> = ({
           
           {/* Ground Wire Count */}
           <div>
-            <label className="text-xs font-semibold text-zinc-300 block mb-1">TOTAL EGC GROUNDS</label>
+            <label className="text-xs font-semibold text-zinc-300 block mb-1">
+              ADDITIONAL EGC GROUNDS
+              {egcCountFromCables > 0 && (
+                <span className="text-emerald-400 font-normal ml-1.5 font-mono">
+                  (+{egcCountFromCables} from cables)
+                </span>
+              )}
+            </label>
             <input
               type="number"
               min="0"
@@ -56,6 +67,9 @@ export const HardwareForm: React.FC<HardwareFormProps> = ({
               onChange={(e) => onChange({ egcCount: Math.max(0, parseInt(e.target.value) || 0) })}
               className="w-full bg-zinc-950 border border-zinc-700 text-white rounded-xl px-3 py-2 text-sm font-semibold font-mono focus:outline-none focus:border-indigo-500"
             />
+            <p className="text-[10px] text-zinc-500 mt-1">
+              Grounds not already riding in a cable above. Total in box: <strong className="text-zinc-300 font-mono">{totalEgcCount}</strong>
+            </p>
           </div>
 
           {/* Largest EGC Size */}
@@ -74,17 +88,17 @@ export const HardwareForm: React.FC<HardwareFormProps> = ({
         </div>
 
         {/* EGC Allowance Summary Note */}
-        {inputs.egcCount > 0 && (
+        {totalEgcCount > 0 && (
           <div className="text-xs text-zinc-400 bg-zinc-950/80 p-3 rounded-xl border border-zinc-800 flex items-start gap-2">
             <Info className="w-4 h-4 text-emerald-400 shrink-0 mt-0.5" />
             <div>
-              {inputs.egcCount <= 4 ? (
+              {totalEgcCount <= 4 ? (
                 <span>
                   <strong>1 Volume Allowance ({NEC_CONDUCTOR_VOLUMES[inputs.largestEgcSize || largestConductorInBox].cuIn} cu in)</strong> for up to 4 equipment grounding wires.
                 </span>
               ) : (
                 <span>
-                  <strong>{(1 + (inputs.egcCount - 4) * 0.25).toFixed(2)} Volume Allowances</strong> (1 base + {(inputs.egcCount - 4) * 0.25} for {inputs.egcCount - 4} extra grounds over 4).
+                  <strong>{(1 + (totalEgcCount - 4) * 0.25).toFixed(2)} Volume Allowances</strong> (1 base + {(totalEgcCount - 4) * 0.25} for {totalEgcCount - 4} extra grounds over 4).
                 </span>
               )}
             </div>

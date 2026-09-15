@@ -1,15 +1,126 @@
 import {
   BoxFillInputs,
+  BoxSuggestion,
+  CableEntry,
   CalculationResult,
+  ConductorEntry,
   VolumeBreakdownItem,
   WireSize
 } from '../types/nec';
 import {
+  CABLE_TYPES,
   NEC_CONDUCTOR_VOLUMES,
   STANDARD_BOXES,
   EXTENSION_RINGS,
-  getLargerWireSize
+  getLargerWireSize,
+  isRingCompatible
 } from '../data/necTables';
+
+interface ExpandedCables {
+  conductors: ConductorEntry[];
+  egcCount: number;
+  largestEgcSize: WireSize | null;
+  clampAdvised: boolean;
+  cableCount: number;
+}
+
+// Cables are an input convenience: each one expands into the insulated conductors
+// it carries plus the equipment grounding conductor riding along with it, so the
+// NEC math below never has to know cables exist.
+export function expandCables(cables: CableEntry[] = []): ExpandedCables {
+  const conductors: ConductorEntry[] = [];
+  let egcCount = 0;
+  let largestEgcSize: WireSize | null = null;
+  let clampAdvised = false;
+  let cableCount = 0;
+
+  cables.forEach((entry) => {
+    const type = CABLE_TYPES.find(t => t.id === entry.cableTypeId);
+    if (!type || entry.quantity <= 0) return;
+
+    cableCount += entry.quantity;
+
+    conductors.push({
+      id: `cable-${entry.id}`,
+      size: type.size,
+      count: type.insulatedCount * entry.quantity,
+      isPigtail: false,
+      description: entry.description
+        ? `${entry.quantity}x ${type.shortLabel} — ${entry.description}`
+        : `${entry.quantity}x ${type.name}`
+    });
+
+    if (type.hasEgc) {
+      egcCount += entry.quantity;
+      largestEgcSize = largestEgcSize
+        ? getLargerWireSize(largestEgcSize, type.egcSize)
+        : type.egcSize;
+    }
+
+    if (type.clampsTypical) clampAdvised = true;
+  });
+
+  return { conductors, egcCount, largestEgcSize, clampAdvised, cableCount };
+}
+
+// Walks the standard box + extension ring catalog for the smallest assemblies that
+// hold the required volume, so an overfilled result can name the fix instead of
+// only describing the failure.
+export function findBoxSuggestions(
+  requiredVolumeCuIn: number,
+  currentBoxId: string,
+  currentRingId: string,
+  reason: 'overfilled' | 'tight'
+): BoxSuggestion[] {
+  if (requiredVolumeCuIn <= 0) return [];
+
+  const rings = EXTENSION_RINGS.filter(r => r.id !== 'custom');
+  const candidates: BoxSuggestion[] = [];
+
+  STANDARD_BOXES.forEach((box) => {
+    rings.forEach((ring) => {
+      if (!isRingCompatible(box, ring.id)) return;
+      if (box.id === currentBoxId && ring.id === currentRingId) return;
+
+      const totalVolumeCuIn = Math.round((box.volumeCuIn + ring.volumeCuIn) * 100) / 100;
+      if (totalVolumeCuIn < requiredVolumeCuIn) return;
+
+      candidates.push({
+        boxId: box.id,
+        boxName: box.name,
+        extensionRingId: ring.id,
+        extensionRingName: ring.name,
+        totalVolumeCuIn,
+        fillPercentage: Math.round((requiredVolumeCuIn / totalVolumeCuIn) * 100),
+        headroomCuIn: Math.round((totalVolumeCuIn - requiredVolumeCuIn) * 100) / 100,
+        reason
+      });
+    });
+  });
+
+  // Prefer assemblies that leave working room; fall back to anything that merely fits.
+  const comfortable = candidates.filter(c => c.fillPercentage <= 85);
+  const pool = comfortable.length > 0 ? comfortable : candidates;
+
+  pool.sort((a, b) => {
+    if (a.totalVolumeCuIn !== b.totalVolumeCuIn) return a.totalVolumeCuIn - b.totalVolumeCuIn;
+    // At equal volume, the single-piece assembly is the simpler install.
+    if (a.extensionRingId === 'none' && b.extensionRingId !== 'none') return -1;
+    if (b.extensionRingId === 'none' && a.extensionRingId !== 'none') return 1;
+    return 0;
+  });
+
+  const seenVolumes = new Set<number>();
+  const suggestions: BoxSuggestion[] = [];
+  pool.forEach((candidate) => {
+    if (suggestions.length >= 3) return;
+    if (seenVolumes.has(candidate.totalVolumeCuIn)) return;
+    seenVolumes.add(candidate.totalVolumeCuIn);
+    suggestions.push(candidate);
+  });
+
+  return suggestions;
+}
 
 export function calculateBoxFill(inputs: BoxFillInputs): CalculationResult {
   const breakdown: VolumeBreakdownItem[] = [];
@@ -19,9 +130,14 @@ export function calculateBoxFill(inputs: BoxFillInputs): CalculationResult {
   // Track the overall largest conductor present in the box for clamps & support fittings
   let largestConductorInBox: WireSize = '14';
 
+  // 0. CABLE EXPANSION — cables become conductors + grounds before any NEC math runs
+  const cables = expandCables(inputs.cables);
+  const allConductors = [...cables.conductors, ...(inputs.conductors || [])];
+  const totalEgcCount = (inputs.egcCount || 0) + cables.egcCount;
+
   // 1. CONDUCTORS VOLUME (NEC 314.16(B)(1))
   let totalConductorVolume = 0;
-  inputs.conductors.forEach((cond) => {
+  allConductors.forEach((cond) => {
     if (cond.count > 0 && !cond.isPigtail) {
       largestConductorInBox = getLargerWireSize(largestConductorInBox, cond.size);
       const unitVol = NEC_CONDUCTOR_VOLUMES[cond.size]?.cuIn || 2.0;
@@ -42,8 +158,12 @@ export function calculateBoxFill(inputs: BoxFillInputs): CalculationResult {
   });
 
   // Check largest wire in grounds
-  if (inputs.egcCount > 0) {
-    largestConductorInBox = getLargerWireSize(largestConductorInBox, inputs.largestEgcSize);
+  const largestEgcSize: WireSize = cables.largestEgcSize
+    ? getLargerWireSize(inputs.largestEgcSize, cables.largestEgcSize)
+    : inputs.largestEgcSize;
+
+  if (totalEgcCount > 0) {
+    largestConductorInBox = getLargerWireSize(largestConductorInBox, largestEgcSize);
   }
   // Check largest wire in devices
   inputs.devices.forEach(d => {
@@ -83,7 +203,7 @@ export function calculateBoxFill(inputs: BoxFillInputs): CalculationResult {
       allowanceCount: 1,
       wireSizeUsed: supportWireSize,
       volumePerAllowance: unitVol,
-      totalVolumeCuIn: unitVol,
+      totalVolumeCuIn: supportVolume,
       details: `1 allowance based on largest conductor (${supportWireSize} AWG)`
     });
   }
@@ -111,15 +231,15 @@ export function calculateBoxFill(inputs: BoxFillInputs): CalculationResult {
 
   // 5. EQUIPMENT GROUNDING CONDUCTORS (NEC 314.16(B)(5))
   let groundingVolume = 0;
-  if (inputs.egcCount > 0) {
-    const egcSize = inputs.largestEgcSize || largestConductorInBox;
+  if (totalEgcCount > 0) {
+    const egcSize = largestEgcSize || largestConductorInBox;
     const unitVol = NEC_CONDUCTOR_VOLUMES[egcSize]?.cuIn || 2.0;
-    
+
     // Up to 4 EGCs = 1 allowance
     let totalGroundAllowances = 1;
-    if (inputs.egcCount > 4) {
+    if (totalEgcCount > 4) {
       // 0.25 allowance per extra EGC over 4
-      const extraGrounds = inputs.egcCount - 4;
+      const extraGrounds = totalEgcCount - 4;
       totalGroundAllowances = 1 + (extraGrounds * 0.25);
     }
 
@@ -129,17 +249,21 @@ export function calculateBoxFill(inputs: BoxFillInputs): CalculationResult {
 
     groundingVolume = totalGroundAllowances * unitVol;
 
+    const sourceNote = cables.egcCount > 0
+      ? ` (${cables.egcCount} from cables + ${inputs.egcCount || 0} entered manually)`
+      : '';
+
     breakdown.push({
       category: 'grounding',
-      label: `Equipment Grounding Wires (${inputs.egcCount} EGCs)`,
+      label: `Equipment Grounding Wires (${totalEgcCount} EGCs)`,
       necRef: 'NEC 314.16(B)(5)',
       allowanceCount: totalGroundAllowances,
       wireSizeUsed: egcSize,
       volumePerAllowance: unitVol,
       totalVolumeCuIn: groundingVolume,
-      details: inputs.egcCount <= 4 
-        ? `1 allowance for ${inputs.egcCount} grounds @ ${unitVol} cu in (${egcSize} AWG)`
-        : `1 + ${inputs.egcCount - 4}x0.25 = ${totalGroundAllowances} allowances @ ${unitVol} cu in`
+      details: totalEgcCount <= 4
+        ? `1 allowance for ${totalEgcCount} grounds @ ${unitVol} cu in (${egcSize} AWG)${sourceNote}`
+        : `1 + ${totalEgcCount - 4}x0.25 = ${totalGroundAllowances} allowances @ ${unitVol} cu in${sourceNote}`
     });
   }
 
@@ -199,9 +323,27 @@ export function calculateBoxFill(inputs: BoxFillInputs): CalculationResult {
     recommendations.push('Consider using a deeper box for easier wire folding and heat dissipation.');
   }
 
-  if (inputs.conductors.length === 0) {
+  if (allConductors.length === 0) {
     warnings.push('No insulated conductors have been added to the calculation.');
   }
+
+  if (cables.clampAdvised && !inputs.hasInternalClamps) {
+    warnings.push('Cable entries typically land on internal clamps — enable the clamp allowance if clamps sit inside the box.');
+  }
+
+  if (inputs.hasInternalClamps && cables.cableCount > 1) {
+    recommendations.push(`Clamps count once for all ${cables.cableCount} cables, not per cable — NEC 314.16(B)(2).`);
+  }
+
+  // Name the smallest assemblies that would actually hold this fill
+  const suggestions = (!isCompliant || fillPercentage > 85)
+    ? findBoxSuggestions(
+        totalRequiredVolumeCuIn,
+        inputs.boxType === 'standard' ? inputs.selectedStandardBoxId : '',
+        inputs.extensionRingId,
+        isCompliant ? 'tight' : 'overfilled'
+      )
+    : [];
 
   return {
     totalRequiredVolumeCuIn,
@@ -216,6 +358,9 @@ export function calculateBoxFill(inputs: BoxFillInputs): CalculationResult {
     excessVolumeCuIn,
     breakdown,
     largestConductorInBox,
+    egcCountFromCables: cables.egcCount,
+    totalEgcCount,
+    suggestions,
     warnings,
     recommendations
   };

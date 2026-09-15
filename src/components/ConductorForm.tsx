@@ -58,43 +58,19 @@ export const ConductorForm: React.FC<ConductorFormProps> = ({ conductors, onChan
         </button>
       </div>
 
-      {/* Quick Preset Buttons */}
-      <div className="flex flex-wrap items-center gap-2 pt-1">
-        <span className="text-xs text-zinc-400 font-medium mr-1">Quick Add Cables:</span>
-        <button
-          type="button"
-          onClick={() => addConductor('14', 2, '14/2 Romex Feed')}
-          className="text-xs bg-zinc-900 hover:bg-zinc-800 text-zinc-300 border border-zinc-700/70 px-2.5 py-1 rounded-lg transition-all font-mono"
-        >
-          + 14/2 Romex (2x 14 AWG)
-        </button>
-        <button
-          type="button"
-          onClick={() => addConductor('12', 2, '12/2 Romex Feed')}
-          className="text-xs bg-zinc-900 hover:bg-zinc-800 text-zinc-300 border border-zinc-700/70 px-2.5 py-1 rounded-lg transition-all font-mono"
-        >
-          + 12/2 Romex (2x 12 AWG)
-        </button>
-        <button
-          type="button"
-          onClick={() => addConductor('14', 3, '14/3 Cable Feed')}
-          className="text-xs bg-zinc-900 hover:bg-zinc-800 text-zinc-300 border border-zinc-700/70 px-2.5 py-1 rounded-lg transition-all font-mono"
-        >
-          + 14/3 Cable (3x 14 AWG)
-        </button>
-        <button
-          type="button"
-          onClick={() => addConductor('12', 3, '12/3 Cable Feed')}
-          className="text-xs bg-zinc-900 hover:bg-zinc-800 text-zinc-300 border border-zinc-700/70 px-2.5 py-1 rounded-lg transition-all font-mono"
-        >
-          + 12/3 Cable (3x 12 AWG)
-        </button>
+      {/* Loose conductor hint */}
+      <div className="flex items-start gap-2 text-[11px] text-zinc-400 bg-zinc-900/60 border border-zinc-800 rounded-xl px-3 py-2">
+        <Info className="w-3.5 h-3.5 text-indigo-400 shrink-0 mt-0.5" />
+        <span>
+          For jacketed cable runs use the <strong className="text-zinc-300">Cables Entering Box</strong> card above — it counts the
+          ground in every cable for you. Add individual wires here for pigtails, loose THHN in conduit, and travelers.
+        </span>
       </div>
 
       {/* Conductors List */}
       {conductors.length === 0 ? (
         <div className="bg-zinc-900/40 border border-dashed border-zinc-800 rounded-2xl p-6 text-center text-zinc-500 text-xs">
-          No conductors added. Click "+ Add Conductor" or use quick cable buttons above.
+          No loose conductors added. Cables above are counted separately.
         </div>
       ) : (
         <div className="space-y-3">

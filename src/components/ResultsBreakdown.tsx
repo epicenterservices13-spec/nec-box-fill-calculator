@@ -1,13 +1,14 @@
 import React from 'react';
-import { CalculationResult } from '../types/nec';
-import { CheckCircle2, AlertOctagon, Lightbulb } from 'lucide-react';
+import { BoxSuggestion, CalculationResult } from '../types/nec';
+import { CheckCircle2, AlertOctagon, Lightbulb, PackageCheck, ArrowRight } from 'lucide-react';
 
 interface ResultsBreakdownProps {
   result: CalculationResult;
   unit: 'imperial' | 'metric';
+  onApplySuggestion: (suggestion: BoxSuggestion) => void;
 }
 
-export const ResultsBreakdown: React.FC<ResultsBreakdownProps> = ({ result, unit }) => {
+export const ResultsBreakdown: React.FC<ResultsBreakdownProps> = ({ result, unit, onApplySuggestion }) => {
   const formatVol = (cuIn: number, cm3: number) => {
     return unit === 'imperial' ? `${cuIn.toFixed(2)} cu in` : `${cm3} cm³`;
   };
@@ -54,7 +55,7 @@ export const ResultsBreakdown: React.FC<ResultsBreakdownProps> = ({ result, unit
         </div>
 
         {/* Warnings / Recommendations */}
-        {result.warnings.length > 0 && (
+        {(result.warnings.length > 0 || result.recommendations.length > 0) && (
           <div className="mt-4 pt-4 border-t border-zinc-800 space-y-2">
             {result.warnings.map((w, idx) => (
               <div key={idx} className="text-xs font-medium text-amber-300 flex items-center gap-2">
@@ -70,6 +71,55 @@ export const ResultsBreakdown: React.FC<ResultsBreakdownProps> = ({ result, unit
           </div>
         )}
       </div>
+
+      {/* Smallest Compliant Box Suggestions */}
+      {result.suggestions.length > 0 && (
+        <div className="glass rounded-3xl p-6 border border-indigo-500/30 bg-indigo-950/10 space-y-4">
+          <div className="flex items-center gap-2.5 border-b border-zinc-800 pb-3">
+            <div className="p-2 bg-indigo-500/10 text-indigo-400 rounded-xl">
+              <PackageCheck className="w-5 h-5" />
+            </div>
+            <div>
+              <h3 className="text-base font-bold text-white">
+                {result.suggestions[0].reason === 'overfilled' ? 'Boxes That Would Pass' : 'Roomier Alternatives'}
+              </h3>
+              <p className="text-xs text-zinc-400">
+                Smallest catalog assemblies holding {formatVol(result.totalRequiredVolumeCuIn, result.totalRequiredVolumeCm3)} — click to apply
+              </p>
+            </div>
+          </div>
+
+          <div className="space-y-2">
+            {result.suggestions.map((s) => (
+              <button
+                key={`${s.boxId}-${s.extensionRingId}`}
+                type="button"
+                onClick={() => onApplySuggestion(s)}
+                className="w-full text-left bg-zinc-900/80 hover:bg-zinc-900 border border-zinc-800 hover:border-indigo-500/50 rounded-2xl p-3.5 transition-all group flex items-center justify-between gap-3"
+              >
+                <div className="min-w-0">
+                  <div className="text-sm font-semibold text-white truncate">{s.boxName}</div>
+                  <div className="text-[11px] text-zinc-400 truncate">
+                    {s.extensionRingId === 'none' ? 'No extension ring needed' : `with ${s.extensionRingName}`}
+                  </div>
+                </div>
+
+                <div className="flex items-center gap-3 shrink-0">
+                  <div className="text-right">
+                    <div className="text-xs font-mono font-bold text-indigo-400">
+                      {formatVol(s.totalVolumeCuIn, Math.round(s.totalVolumeCuIn * 16.3871))}
+                    </div>
+                    <div className="text-[10px] text-zinc-500 font-mono">
+                      {s.fillPercentage}% fill · {formatVol(s.headroomCuIn, Math.round(s.headroomCuIn * 16.3871))} free
+                    </div>
+                  </div>
+                  <ArrowRight className="w-4 h-4 text-zinc-600 group-hover:text-indigo-400 transition-colors" />
+                </div>
+              </button>
+            ))}
+          </div>
+        </div>
+      )}
 
       {/* Itemized Volume Breakdown Table */}
       <div className="glass rounded-3xl p-6 border border-zinc-800 space-y-4">
